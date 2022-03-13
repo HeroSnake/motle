@@ -68,6 +68,9 @@
 <Styles />
 
 <Col xs="12" lg="8" class="main-container">
+	{#if history.length == 6}
+		<h1>{words[index]}</h1>
+	{/if}
 	{#each history as entry}
 		<div class="words-container">
 			{#each entry as letter}
