@@ -155,12 +155,6 @@ button:focus {
     /* Internet Explorer/Edge */
 }
 
-.keyboard-letter:hover,
-.keyboard-key:hover {
-    background-color: rgb(51, 51, 51);
-    cursor: pointer;
-}
-
 .valid {
     background-color: green;
 }
@@ -171,6 +165,14 @@ button:focus {
 
 .in-word {
     background-color: rgb(212, 163, 2);
+}
+
+@media screen and (min-width: 641px) {
+    .keyboard-letter:hover,
+    .keyboard-key:hover {
+        background-color: rgb(51, 51, 51);
+        cursor: pointer;
+    }
 }
 
 @media screen and (max-width: 641px) {
