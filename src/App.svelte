@@ -2,22 +2,24 @@
 	import { Styles, Col } from 'sveltestrap'
 	import { words } from './words.js'
 	import { config } from './config.js'
-	import Icon from 'svelte-awesome';
-	import { arrowDown, arrowLeft } from 'svelte-awesome/icons';
+	import Icon from 'svelte-awesome'
+	import { arrowDown, arrowLeft } from 'svelte-awesome/icons'
+	import { blur } from 'svelte/transition'
+	import { quintOut } from "svelte/easing"
 
 	let history = []
 	let maxTry = config.maxTry
 	let keysMapped = config.keys
 	let gameStatus = config.gameStatus
+	let status = gameStatus[0]
+	let error = ''
 
-	let wordsFiltered = words.filter(w => w.length >= config.minLength && w.length < config.maxLength)
+	let wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
 	let stringWord = wordsFiltered[Math.floor(Math.random() * wordsFiltered.length)]
 
-	const word = [...stringWord].map(l => ({ value: l, status: ''}))
+	let word = [...stringWord].map(l => ({ value: l, status: ''}))
 
 	let dab =  word.map((l, i) => !i ? l.value : '')
-
-	$: gameSuccess = !word.filter(l => l.status != 'success').length
 
 	const inputVal = val => {
 		const value = val.toUpperCase()
@@ -36,13 +38,21 @@
 			dab = [...dab]
 		}
 		if (dab.length <= 1) {
-			dab = word.map((l, i) => !i ? l.value : '')
+			dab = word.map((l, i) => !i || l.status == 'valid' ? l.value : '')
 		}
-		console.log(dab)
 	}
 
 	const dabValue = () => {
 		if(dab.length != word.length || dab.includes('') || history.length == maxTry) {
+			return
+		}
+		if (!wordsFiltered.includes(dab.join(''))) {
+			error = 'error'
+			const inter = setInterval(() => error = error.length ? '' : 'error', 250)
+			setTimeout(() => {
+				clearInterval(inter)
+				error = ''
+			}, 2000)
 			return
 		}
 		let entry = []
@@ -73,8 +83,14 @@
 			}
 		})
 
-		keysMapped = keysMapped
 		history = [...history, entry]
+		if (!word.filter(l => l.status != 'valid').length) {
+			status = gameStatus[1]
+		} else if (history.length == maxTry) {
+			status = gameStatus[2]
+		}
+		console.log(status)
+		keysMapped = keysMapped
 		dab = []
 		suppVal()
 	}
@@ -94,26 +110,38 @@
 <Styles />
 <svelte:window on:keydown={keyInput}/>
 <Col xs="12" lg="8" class="main-container">
-	{#if history.length == maxTry || gameSuccess}
+	{#if status != 'start'}
 		<h1>{stringWord}</h1>
+		<div class="gif-container {status}" transition:blur={{ delay: 200, duration: 1000, easing: quintOut }}>
+			<img src="/img/{status}.gif" alt="{status}">
+			<span>Bravo !</span>
+		</div>
 	{/if}
 	{#each history as entry}
-		<div class="words-container">
-			{#each entry as letter}
-				<div class="word-block { letter.status }">
-					{ letter.value ?? '' }
-				</div>
-			{/each}
+	<div class="words-container">
+		{#each entry as letter}
+		<div class="word-block { letter.status }">
+			{ letter.value ?? '' }
 		</div>
+		{/each}
+	</div>
 	{/each}
-	{#if history.length < maxTry && word.length && !gameSuccess}
+	{#if status == 'start'}
 		<div class="words-container">
 			{#each word as option, index}
-				<div class="word-block">
-					{dab[index] ?? ''}
-				</div>
+			<div class="word-block { error }">
+				{dab[index] ?? ''}
+			</div>
 			{/each}
 		</div>
+		{#each Array(maxTry - history.length - 1) as entry}
+			<div class="words-container">
+				{#each word as _}
+					<div class="word-block back">
+					</div>
+				{/each}
+			</div>
+		{/each}
 	{/if}
 </Col>
 <div class="keyboard">

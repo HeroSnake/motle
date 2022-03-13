@@ -11,7 +11,7 @@ body {
     padding: 0;
     box-sizing: border-box;
     background-color: #232327 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", monospace;
 }
 
 a {
@@ -165,6 +165,35 @@ button:focus {
 
 .in-word {
     background-color: rgb(212, 163, 2);
+}
+
+.fail {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error {
+    background-color: red;
+}
+
+.back {
+    opacity: 0.2;
+}
+
+.gif-container {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+}
+
+.gif-container img {
+    width: 100%;
 }
 
 .keyboard-letter:active,
