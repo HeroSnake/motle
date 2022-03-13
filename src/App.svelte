@@ -125,11 +125,11 @@
 <Styles />
 <svelte:window on:keydown={keyInput}/>
 <Col xs="12" lg="8" class="main-container">
-	<h1>{stringWord}</h1>
+	<!-- <h1>{stringWord}</h1> -->
 	{#if status != 'start' && displayStatus}
 		<div class="gif-container {status}" transition:blur={{ delay: 100, duration: 500 }} on:click={() => displayStatus = false}>
 			<img src="/img/{status}.gif" alt="{status}">
-			<!-- <span>Bravo !</span> -->
+			<span class="answer">{stringWord}</span>
 		</div>
 	{/if}
 	{#each history as entry}
