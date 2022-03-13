@@ -80,6 +80,11 @@ button:focus {
     margin-bottom: 10px;
 }
 
+.input-container {
+    display: flex;
+    grid-column: 7 / span 3;
+}
+
 .word-block {
     background-color: #666;
     text-align: center;
@@ -131,7 +136,7 @@ button:focus {
     background-color: #666;
     color: #fff;
     margin: 3px;
-    font-size: 1.5rem;
+    font-size: 2em;
     border-radius: 7px;
     display: flex;
     align-items: center;

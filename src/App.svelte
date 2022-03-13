@@ -121,11 +121,13 @@
 		{#each keysMapped as key}
 			<div class="keyboard-letter keyboard-input { key.status }" on:click={() => inputVal(key.value)}>{ key.value }</div>
 		{/each}
-		<div class="keyboard-key keyboard-input" on:click={ dabValue }>
-			<Icon data={ arrowDown }/>
-		</div>
-		<div class="keyboard-key keyboard-input" on:click={ suppVal }>
-			<Icon data={ arrowLeft }/>
+		<div class="input-container">
+			<div class="keyboard-key keyboard-input" on:click={ suppVal }>
+				<Icon data={ arrowLeft }/>
+			</div>
+			<div class="keyboard-key keyboard-input" on:click={ dabValue }>
+				<Icon data={ arrowDown }/>
+			</div>
 		</div>
 	</Col>
 </div>
