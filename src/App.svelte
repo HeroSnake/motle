@@ -1,35 +1,48 @@
 <script>
 	import { Styles, Col } from 'sveltestrap'
 	import { words } from './words.js'
-	import { keys } from './keys.js'
+	import { config } from './config.js'
 	import Icon from 'svelte-awesome';
 	import { arrowDown, arrowLeft } from 'svelte-awesome/icons';
 
 	let history = []
-	let maxTry = 6
-	let keysMapped = keys
+	let maxTry = config.maxTry
+	let keysMapped = config.keys
+	let gameStatus = config.gameStatus
 
-	const index = Math.floor(Math.random() * words.length)
-	let temp = words.filter(w => w.length > 4 || w.length < 10)
+	let wordsFiltered = words.filter(w => w.length >= config.minLength && w.length < config.maxLength)
+	let stringWord = wordsFiltered[Math.floor(Math.random() * wordsFiltered.length)]
 
-	let word = [...temp[index]]
-	let dab = [word[0]]
+	const word = [...stringWord].map(l => ({ value: l, status: ''}))
 
-	const inputVal = (val) => {
-		if(dab.length < word.length) {
-			dab = [...dab, val.toUpperCase()]
+	let dab =  word.map((l, i) => !i ? l.value : '')
+
+	$: gameSuccess = !word.filter(l => l.status != 'success').length
+
+	const inputVal = val => {
+		const value = val.toUpperCase()
+		if(value != dab[0] || !dab.includes('')) {
+			if (dab.includes('')) {
+				dab = [word[0].value, value]
+			} else if(dab.length < word.length) {
+				dab = [...dab, value]
+			}
 		}
 	}
 
 	const suppVal = () => {
-		if(dab.length > 1) {
+		if(dab.length > 1 && !dab.includes('')) {
 			dab.pop()
 			dab = [...dab]
 		}
+		if (dab.length <= 1) {
+			dab = word.map((l, i) => !i ? l.value : '')
+		}
+		console.log(dab)
 	}
 
 	const dabValue = () => {
-		if(dab.length != word.length || history.length == maxTry) {
+		if(dab.length != word.length || dab.includes('') || history.length == maxTry) {
 			return
 		}
 		let entry = []
@@ -37,11 +50,12 @@
 
 		for (let i = 0; i < word.length; i++) {
 			let letter = { value: dab[i].toUpperCase(), status: 'invalid' }
-			if(letter.value == word[i]) {
+			if(letter.value == word[i].value) {
+				word[i].status = 'valid'
 				keysMapped.find(k => k.value == letter.value).status = 'valid'
 				letter.status = 'valid'
 			} else {
-				unchecked.push(word[i])
+				unchecked.push(word[i].value)
 			}
 			entry.push(letter)
 		}
@@ -54,22 +68,34 @@
 				letter.status = 'in-word'
 				keysMapped.find(k => k.value == letter.value).status = 'in-word'
 				unchecked.splice(idx, 1)
-			} else if(!word.includes(letter.value)) {
+			} else if(word.findIndex(l => l.value == letter.value) == -1) {
 				keysMapped.find(k => k.value == letter.value).status = 'invalid'
 			}
 		})
 
 		keysMapped = keysMapped
 		history = [...history, entry]
-		dab = [word[0]]
+		dab = []
+		suppVal()
+	}
+
+	const keyInput = event => {
+		let val = event.key.toUpperCase()
+		if(keysMapped.find(k => k.value == val)) {
+			inputVal(val)
+		} else if(val == 'BACKSPACE') {
+			suppVal()
+		} else if(val == 'ENTER') {
+			dabValue()
+		}
 	}
 
 </script>
 <Styles />
-
+<svelte:window on:keydown={keyInput}/>
 <Col xs="12" lg="8" class="main-container">
-	{#if history.length == 6}
-		<h1>{words[index]}</h1>
+	{#if history.length == maxTry || gameSuccess}
+		<h1>{stringWord}</h1>
 	{/if}
 	{#each history as entry}
 		<div class="words-container">
@@ -80,7 +106,7 @@
 			{/each}
 		</div>
 	{/each}
-	{#if history.length < maxTry }
+	{#if history.length < maxTry && word.length && !gameSuccess}
 		<div class="words-container">
 			{#each word as option, index}
 				<div class="word-block">
