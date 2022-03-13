@@ -30,5 +30,6 @@ export let config = {
     gameStatus: ['start', 'success', 'fail'],
     maxTry: 6,
     minLength: 5,
-    maxLength: 8
+    maxLength: 8,
+    revealDelay: 250,
 }

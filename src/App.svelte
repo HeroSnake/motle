@@ -3,13 +3,14 @@
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
-	import { arrowDown, arrowLeft } from 'svelte-awesome/icons'
+	import { arrowDown, arrowLeft, laptop } from 'svelte-awesome/icons'
 	import { blur } from 'svelte/transition'
 
+	const revealDelay = config.revealDelay
 	let history = []
-	let maxTry
+	let maxTry = config.maxTry
 	let keysMapped = []
-	let gameStatus = []
+	const gameStatus = config.gameStatus
 	let status
 	let displayStatus = false
 	let error = ''
@@ -18,46 +19,46 @@
 	let word = []
 	let dab = []
 
+	$: placeHolderNumber = maxTry - history.length - 1
+	$: dabString = dab.map(l => l.value)
+
 	const init = () => {
 		keysMapped = config.keys
-		gameStatus = config.gameStatus
 		status = gameStatus[0]
-		maxTry = config.maxTry
 	}
 
 	const startGame = () => {
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
 		stringWord = wordsFiltered[Math.floor(Math.random() * wordsFiltered.length)]
 		word = [...stringWord].map(l => ({ value: l, status: ''}))
-		dab =  word.map((l, i) => !i ? l.value : '')
+		dab =  word.map((l, i) => ({value: !i ? l.value : '', status: 'unchecked'}))
 	}
 
 	const inputVal = val => {
 		const value = val.toUpperCase()
-		if(value != dab[0] || !dab.includes('')) {
-			if (dab.includes('')) {
-				dab = [word[0].value, value]
+		if(value != dab[0].value || !dabString.includes('')) {
+			if (dabString.includes('')) {
+				dab = [{value: word[0].value, status: 'unchecked'}, {value, status: 'unchecked'}]
 			} else if(dab.length < word.length) {
-				dab = [...dab, value]
+				dab = [...dab, {value, status: 'unchecked'}]
 			}
 		}
 	}
 
 	const suppVal = () => {
-		if(dab.length > 1 && !dab.includes('')) {
-			dab.pop()
-			dab = [...dab]
+		if(dab.length > 1 && !dabString.includes('')) {
+			dab = dab.slice(0, -1)
 		}
 		if (dab.length <= 1) {
-			dab = word.map((l, i) => !i || l.status == 'valid' ? l.value : '')
+			dab = word.map((l, i) => ({value: !i ? l.value : '', status: 'unchecked'}))
 		}
 	}
 
 	const dabValue = () => {
-		if(dab.length != word.length || dab.includes('') || status != 'start') {
+		if(dab.length != word.length || dab.findIndex(l => l.value == '') != -1 || status != 'start') {
 			return
 		}
-		if (!wordsFiltered.includes(dab.join(''))) {
+		if (!wordsFiltered.includes(dabString.join(''))) {
 			error = 'error'
 			const inter = setInterval(() => error = error.length ? '' : 'error', 250)
 			setTimeout(() => {
@@ -70,7 +71,7 @@
 		let unchecked = []
 
 		for (let i = 0; i < word.length; i++) {
-			let letter = { value: dab[i].toUpperCase(), status: 'invalid' }
+			let letter = { value: dab[i].value.toUpperCase(), status: 'invalid' }
 			if(letter.value == word[i].value) {
 				word[i].status = 'valid'
 				keysMapped.find(k => k.value == letter.value).status = 'valid'
@@ -94,7 +95,7 @@
 			}
 		})
 
-		history = [...history, entry]
+		revealDab(entry)
 		if (!word.filter(l => l.status != 'valid').length) { 	//WIN
 			status = gameStatus[1]
 			displayStatus = true
@@ -102,9 +103,8 @@
 			status = gameStatus[2]
 			displayStatus = true
 		}
+
 		keysMapped = keysMapped
-		dab = []
-		suppVal()
 	}
 
 	const keyInput = event => {
@@ -117,6 +117,20 @@
 			dabValue()
 		}
 	}
+
+	const revealDab = async word => {
+		dab = word.map(l => ({...l, status: 'unchecked'}))
+		for (let [i, l] of word.entries()) {
+			dab[i] = l
+			await laPause()
+		}
+
+		dab = []
+		suppVal()
+		history = [...history, word]
+	}
+
+	const laPause = () => new Promise(resolve => setTimeout(resolve, revealDelay))
 
 	init()
 	startGame()
@@ -143,13 +157,13 @@
 	{/each}
 	{#if status == 'start'}
 		<div class="words-container">
-			{#each word as option, index}
-			<div class="word-block { error }">
-				{dab[index] ?? ''}
-			</div>
+			{#each word as _, index}
+				<div class="word-block { error } {dab[index]?.status ?? ''}">
+					{dab[index]?.value ?? ''}
+				</div>
 			{/each}
 		</div>
-		{#each Array(maxTry - history.length - 1) as entry}
+		{#each Array(placeHolderNumber) as entry}
 			<div class="words-container">
 				{#each word as _}
 					<div class="word-block back">
