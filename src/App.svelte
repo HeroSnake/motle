@@ -68,7 +68,6 @@
 <Styles />
 
 <Col xs="12" lg="8" class="main-container">
-	<h1>{words[index]}</h1>
 	{#each history as entry}
 		<div class="words-container">
 			{#each entry as letter}
