@@ -50,7 +50,7 @@
 			dab = dab.slice(0, -1)
 		}
 		if (dab.length <= 1) {
-			dab = word.map((l, i) => ({value: !i ? l.value : '', status: 'unchecked'}))
+			dab = word.map((l, i) => ({value: !i || l.status == 'valid' ? l.value : '', status: 'unchecked'}))
 		}
 	}
 
