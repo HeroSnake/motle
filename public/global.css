@@ -115,6 +115,7 @@ button:focus {
     text-transform: uppercase;
     position: fixed;
     bottom: 0;
+    overflow-y: scroll;
 }
 
 .keyboard-line {
