@@ -1,0 +1,173 @@
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    color: #fff !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #232327 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+a {
+    color: rgb(0, 100, 200);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited {
+    color: rgb(0, 80, 160);
+}
+
+label {
+    display: block;
+}
+
+input,
+button,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    -webkit-padding: 0.4em 0;
+    padding: 0.4em;
+    margin: 0 0 0.5em 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
+input:disabled {
+    color: #ccc;
+}
+
+button {
+    color: #333;
+    background-color: #f4f4f4;
+    outline: none;
+}
+
+button:disabled {
+    color: #999;
+}
+
+button:not(:disabled):active {
+    background-color: #ddd;
+}
+
+button:focus {
+    border-color: #666;
+}
+
+.main-container {
+    margin: auto;
+    text-align: center;
+}
+
+.words-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 10px;
+}
+
+.word-block {
+    background-color: #666;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: xx-large;
+    text-transform: uppercase;
+    height: 50px;
+    width: 50px;
+}
+
+.word-block input {
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.keyboard-container {
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: 6px;
+}
+
+.keyboard {
+    padding: 10px;
+    background-color: #161618;
+    width: 100%;
+    color: #666;
+    text-transform: uppercase;
+    position: fixed;
+    bottom: 0;
+}
+
+.keyboard-line {
+    display: flex;
+    justify-content: center;
+}
+
+.keyboard-letter,
+.keyboard-key {
+    padding: 14px 20px;
+    background-color: #666;
+    color: #fff;
+    margin: 3px;
+    font-size: 1.5rem;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    width: 100%;
+    user-select: none;
+    /* supported by Chrome and Opera */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+}
+
+.keyboard-letter:hover,
+.keyboard-key:hover {
+    background-color: rgb(51, 51, 51);
+    cursor: pointer;
+}
+
+.valid {
+    background-color: green;
+}
+
+.invalid {
+    opacity: 0.5;
+}
+
+.in-word {
+    background-color: rgb(212, 163, 2);
+}
+
+@media screen and (max-width: 641px) {
+    .keyboard-letter,
+    .keyboard-key {
+        padding: 0 7px;
+    }
+}
