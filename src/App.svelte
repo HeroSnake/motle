@@ -19,7 +19,7 @@
 	let word = []
 	let dab = []
 
-	$: placeHolderNumber = maxTry - history.length - 1
+	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
 
 	const init = () => {
@@ -54,7 +54,7 @@
 		}
 	}
 
-	const dabValue = () => {
+	const dabValue = async () => {
 		if(dab.length != word.length || dab.findIndex(l => l.value == '') != -1 || status != 'start') {
 			return
 		}
@@ -95,7 +95,7 @@
 			}
 		})
 
-		revealDab(entry)
+		await revealDab(entry)
 		if (!word.filter(l => l.status != 'valid').length) { 	//WIN
 			status = gameStatus[1]
 			displayStatus = true

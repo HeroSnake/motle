@@ -31,5 +31,5 @@ export let config = {
     maxTry: 6,
     minLength: 5,
     maxLength: 8,
-    revealDelay: 250,
+    revealDelay: 100,
 }
