@@ -32,4 +32,12 @@ export let config = {
     minLength: 5,
     maxLength: 8,
     revealDelay: 100,
+    defaultLocalStorage: {
+        name: 'user',
+        data: {
+            username: 'No1', //no one
+            games: [],
+            highScore: 0
+        }
+    }
 }

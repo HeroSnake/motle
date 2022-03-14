@@ -3,31 +3,35 @@
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
-	import { arrowDown, arrowLeft, laptop } from 'svelte-awesome/icons'
+	import { arrowDown, arrowLeft, repeat } from 'svelte-awesome/icons'
 	import { blur } from 'svelte/transition'
 
 	const revealDelay = config.revealDelay
-	let history = []
-	let maxTry = config.maxTry
-	let keysMapped = []
 	const gameStatus = config.gameStatus
+	let maxTry = config.maxTry
+	let history = []
+	let keysMapped = []
 	let status
-	let displayStatus = false
 	let error = ''
 	let wordsFiltered = []
 	let stringWord
 	let word = []
 	let dab = []
+	let playerData = JSON.stringify(localStorage.getItem('user'))
+	// console.log(playerData)
+
+	if(playerData == 'null') {
+		localStorage.setItem(config.defaultLocalStorage.name, JSON.stringify(config.defaultLocalStorage.data))
+	}
 
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
 
-	const init = () => {
+	const startGame = () => {
+		console.log('ocucocu');
 		keysMapped = config.keys
 		status = gameStatus[0]
-	}
-
-	const startGame = () => {
+		history = []
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
 		stringWord = wordsFiltered[Math.floor(Math.random() * wordsFiltered.length)]
 		word = [...stringWord].map(l => ({ value: l, status: ''}))
@@ -98,10 +102,8 @@
 		await revealDab(entry)
 		if (!word.filter(l => l.status != 'valid').length) { 	//WIN
 			status = gameStatus[1]
-			displayStatus = true
 		} else if (history.length == maxTry) {					//LOOSE
 			status = gameStatus[2]
-			displayStatus = true
 		}
 
 		keysMapped = keysMapped
@@ -132,20 +134,19 @@
 
 	const laPause = () => new Promise(resolve => setTimeout(resolve, revealDelay))
 
-	init()
 	startGame()
 </script>
 
 <Styles />
 <svelte:window on:keydown={keyInput}/>
+{#if status != 'start'}
+	<div class="gif-container {status}" transition:blur={{ delay: 100, duration: 500 }}>
+		<img src="/img/{status}.gif" alt="{status}">
+		<span class="answer">{stringWord}</span>
+		<button class="replay-btn" on:click={startGame}><Icon data={ repeat }/> REJOUER</button>
+	</div>
+{/if}
 <Col xs="12" lg="8" class="main-container">
-	<!-- <h1>{stringWord}</h1> -->
-	{#if status != 'start' && displayStatus}
-		<div class="gif-container {status}" transition:blur={{ delay: 100, duration: 500 }} on:click={() => displayStatus = false}>
-			<img src="/img/{status}.gif" alt="{status}">
-			<span class="answer">{stringWord}</span>
-		</div>
-	{/if}
 	{#each history as entry}
 	<div class="words-container">
 		{#each entry as letter}
@@ -173,18 +174,21 @@
 		{/each}
 	{/if}
 </Col>
-<div class="keyboard">
-	<Col xs="12" lg="5" class="keyboard-container">
-		{#each keysMapped as key, index}
-			{#if index == 20}
-				<div class="keyboard-key keyboard-input enter" on:click={ dabValue }>
-					<Icon data={ arrowDown }/>
-				</div>
-			{/if}
-			<div class="keyboard-letter keyboard-input { key.status }" on:click={() => inputVal(key.value)}>{ key.value }</div>
-		{/each}
-		<div class="keyboard-key keyboard-input supp" on:click={ suppVal }>
-			<Icon data={ arrowLeft }/>
-		</div>
-	</Col>
-</div>
+<!-- <h1>{stringWord}</h1> -->
+{#if status == 'start'}
+	<div class="keyboard">
+		<Col xs="12" lg="5" class="keyboard-container">
+			{#each keysMapped as key, index}
+				{#if index == 20}
+					<div class="keyboard-key keyboard-input enter" on:click={ dabValue }>
+						<Icon data={ arrowDown }/>
+					</div>
+				{/if}
+				<div class="keyboard-letter keyboard-input { key.status }" on:click={() => inputVal(key.value)}>{ key.value }</div>
+			{/each}
+			<div class="keyboard-key keyboard-input supp" on:click={ suppVal }>
+				<Icon data={ arrowLeft }/>
+			</div>
+		</Col>
+	</div>
+{/if}

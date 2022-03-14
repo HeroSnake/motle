@@ -80,6 +80,7 @@ button:focus {
     padding: 10px;
     margin: auto;
     text-align: center;
+    min-height: 50vh;
 }
 
 .words-container {
@@ -194,17 +195,12 @@ button:focus {
 }
 
 .gif-container {
-    position: absolute;
     background-color: rgba(0, 0, 0, 0.6);
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 9;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;
+    height: 100vh;
 }
 
 .gif-container img {
@@ -214,6 +210,14 @@ button:focus {
 
 .answer {
     font-size: 50px;
+}
+
+.replay-btn {
+    background-color: rgb(49, 197, 69);
+    font-size: 2em;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .keyboard-letter:active,
