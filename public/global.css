@@ -213,7 +213,7 @@ button:focus {
 }
 
 .replay-btn {
-    background-color: rgb(49, 197, 69);
+    background: transparent;
     font-size: 2em;
     color: #fff;
     padding: 10px;

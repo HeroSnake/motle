@@ -1,4 +1,4 @@
-export let config = {
+export const config = {
     keys: [
         { value: 'A', status: 'unchecked' },
         { value: 'Z', status: 'unchecked' },

@@ -18,7 +18,6 @@
 	let word = []
 	let dab = []
 	let playerData = JSON.stringify(localStorage.getItem('user'))
-	// console.log(playerData)
 
 	if(playerData == 'null') {
 		localStorage.setItem(config.defaultLocalStorage.name, JSON.stringify(config.defaultLocalStorage.data))
@@ -28,8 +27,7 @@
 	$: dabString = dab.map(l => l.value)
 
 	const startGame = () => {
-		console.log('ocucocu');
-		keysMapped = config.keys
+		keysMapped = Array.from(config.keys, k => ({...k}))
 		status = gameStatus[0]
 		history = []
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
