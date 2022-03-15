@@ -76,6 +76,15 @@ button:focus {
     border-color: #666;
 }
 
+.top-container {
+    background-color: #161618;
+    padding: 10px;
+    display: flex;
+    font-size: 1em;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
 .main-container {
     padding: 10px;
     margin: auto;
@@ -218,6 +227,15 @@ button:focus {
     color: #fff;
     padding: 10px;
     border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.replay-btn:hover {
+    color: #000;
+    background-color: #fff;
 }
 
 .keyboard-letter:active,

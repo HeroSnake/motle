@@ -32,12 +32,16 @@ export const config = {
     minLength: 5,
     maxLength: 8,
     revealDelay: 100,
+    transitions: {
+        time: 100,
+        duration: 200
+    },
     defaultLocalStorage: {
-        name: 'user',
-        data: {
+        userData: {
             username: 'No1', //no one
             games: [],
             highScore: 0
         }
+
     }
 }

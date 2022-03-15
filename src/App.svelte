@@ -1,5 +1,7 @@
 <script>
 	import { Styles, Col } from 'sveltestrap'
+	import Modal from 'svelte-simple-modal';
+	import AppModal from './components/AppModal.svelte'
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
@@ -8,6 +10,7 @@
 
 	const revealDelay = config.revealDelay
 	const gameStatus = config.gameStatus
+	const transitions = config.transitions
 	let maxTry = config.maxTry
 	let history = []
 	let keysMapped = []
@@ -17,16 +20,18 @@
 	let stringWord
 	let word = []
 	let dab = []
-	let playerData = JSON.stringify(localStorage.getItem('user'))
-
-	if(playerData == 'null') {
-		localStorage.setItem(config.defaultLocalStorage.name, JSON.stringify(config.defaultLocalStorage.data))
-	}
+	let userData = JSON.parse(localStorage.getItem('userData')) ?? {...config.defaultLocalStorage.userData}
 
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
+	$: console.log(userData)
+
+	const saveUserData = () => {
+		localStorage.setItem('userData', JSON.stringify(userData))
+	}
 
 	const startGame = () => {
+		saveUserData()
 		keysMapped = Array.from(config.keys, k => ({...k}))
 		status = gameStatus[0]
 		history = []
@@ -99,12 +104,23 @@
 
 		await revealDab(entry)
 		if (!word.filter(l => l.status != 'valid').length) { 	//WIN
-			status = gameStatus[1]
+			winGame()
 		} else if (history.length == maxTry) {					//LOOSE
-			status = gameStatus[2]
+			looseGame()
 		}
+		saveUserData()
 
 		keysMapped = keysMapped
+	}
+
+	const winGame = () => {
+		status = gameStatus[1]
+		userData.highScore++
+	}
+
+	const looseGame = () => {
+		status = gameStatus[2]
+		userData.highScore = 0
 	}
 
 	const keyInput = event => {
@@ -137,11 +153,17 @@
 
 <Styles />
 <svelte:window on:keydown={keyInput}/>
+<div class="top-container">
+	<Modal closeButton={false}>
+		<AppModal playerName={userData.username}/>
+	</Modal>
+	<span>{userData.highScore}</span>
+</div>
 {#if status != 'start'}
-	<div class="gif-container {status}" transition:blur={{ delay: 100, duration: 500 }}>
+	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">
 		<span class="answer">{stringWord}</span>
-		<button class="replay-btn" on:click={startGame}><Icon data={ repeat }/> REJOUER</button>
+		<button class="replay-btn" on:click={startGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
 	</div>
 {/if}
 <Col xs="12" lg="8" class="main-container">
@@ -174,7 +196,7 @@
 </Col>
 <!-- <h1>{stringWord}</h1> -->
 {#if status == 'start'}
-	<div class="keyboard" transition:blur={{ delay: 110, duration: 500 }}>
+	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
 			{#each keysMapped as key, index}
 				{#if index == 20}
