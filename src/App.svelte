@@ -1,7 +1,5 @@
 <script>
-	import { Styles, Col } from 'sveltestrap'
-	import Modal from 'svelte-simple-modal';
-	import AppModal from './components/AppModal.svelte'
+	import { Styles, Col, Input } from 'sveltestrap'
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
@@ -20,6 +18,7 @@
 	let stringWord
 	let word = []
 	let dab = []
+	let displayModal = false
 	let userData = JSON.parse(localStorage.getItem('userData')) ?? {...config.defaultLocalStorage.userData}
 
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
@@ -123,14 +122,23 @@
 		userData.highScore = 0
 	}
 
+	const inputName = (e) => {
+		userData.username = e.target.value
+		saveUserData()
+	}
+
 	const keyInput = event => {
 		let val = event.key.toUpperCase()
-		if(keysMapped.find(k => k.value == val)) {
-			inputVal(val)
-		} else if(val == 'BACKSPACE') {
-			suppVal()
+		if(!displayModal) {
+			if(keysMapped.find(k => k.value == val)) {
+				inputVal(val)
+			} else if(val == 'BACKSPACE') {
+				suppVal()
+			} else if(val == 'ENTER') {
+				dabValue()
+			}
 		} else if(val == 'ENTER') {
-			dabValue()
+			displayModal = false
 		}
 	}
 
@@ -153,12 +161,20 @@
 
 <Styles />
 <svelte:window on:keydown={keyInput}/>
+{#if displayModal}
+<div>
+	<div class="custom-modal" on:click|self={() => displayModal = false}>
+	</div>
+	<div class="custom-modal-content">
+		<Input autofocus on:input={inputName} bind:value={userData.username}/>
+	</div>
+</div>
+{/if}
 <div class="top-container">
-	<Modal closeButton={false}>
-		<AppModal playerName={userData.username}/>
-	</Modal>
+	<span on:click={() => displayModal = true}>{userData.username}</span>
 	<span>{userData.highScore}</span>
 </div>
+
 {#if status != 'start'}
 	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">

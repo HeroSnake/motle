@@ -85,6 +85,22 @@ button:focus {
     align-items: center;
 }
 
+.custom-modal {
+    background-color: #000000a6;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    z-index: 3;
+}
+
+.custom-modal-content {
+    z-index: 4;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .main-container {
     padding: 10px;
     margin: auto;
