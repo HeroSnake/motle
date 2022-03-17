@@ -9,6 +9,7 @@
 	const revealDelay = config.revealDelay
 	const gameStatus = config.gameStatus
 	const transitions = config.transitions
+
 	let maxTry = config.maxTry
 	let history = []
 	let keysMapped = []
@@ -18,26 +19,45 @@
 	let stringWord
 	let word = []
 	let dab = []
+	let playerScore
 	let displayModal = false
 	let userData = JSON.parse(localStorage.getItem('userData')) ?? {...config.defaultLocalStorage.userData}
+	let userHistory = JSON.parse(localStorage.getItem('userHistory')) ?? {...config.defaultLocalStorage.userHistory}
 
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
-	$: console.log(userData)
+	// $: console.log(userData)
+	// $: console.log(userHistory)
+
 
 	const saveUserData = () => {
 		localStorage.setItem('userData', JSON.stringify(userData))
+		localStorage.setItem('userHistory', JSON.stringify(userHistory))
 	}
 
 	const startGame = () => {
-		saveUserData()
 		keysMapped = Array.from(config.keys, k => ({...k}))
 		status = gameStatus[0]
 		history = []
+		playerScore = 0
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
-		stringWord = wordsFiltered[Math.floor(Math.random() * wordsFiltered.length)]
-		word = [...stringWord].map(l => ({ value: l, status: ''}))
-		dab =  word.map((l, i) => ({value: !i ? l.value : '', status: 'unchecked'}))
+		if((userHistory.word ?? '') == '') {
+			const idx = Math.floor(Math.random() * wordsFiltered.length)
+			stringWord = wordsFiltered[idx]
+			word = [...stringWord].map(l => ({ value: l, status: ''}))
+			userHistory.word = idx
+			dab = []
+			history = []
+		} else {
+			stringWord = wordsFiltered[userHistory.word]
+			word = [...stringWord].map(l => ({ value: l, status: ''}))
+			history = userHistory.current
+			dab = userHistory.dab
+		}
+		if (!dab.length) {
+			suppVal()
+		}
+		saveUserData()
 	}
 
 	const inputVal = val => {
@@ -49,6 +69,19 @@
 				dab = [...dab, {value, status: 'unchecked'}]
 			}
 		}
+	}
+
+	const updateCurrentGame = () => {
+		userHistory.current = [...history]
+		userHistory.dab = [...dab]
+		saveUserData()
+	}
+
+	const clearCurrentGame = () => {
+		userHistory.current = []
+		userHistory.dab = []
+		userHistory.word = ''
+		saveUserData()
 	}
 
 	const suppVal = () => {
@@ -114,12 +147,15 @@
 
 	const winGame = () => {
 		status = gameStatus[1]
-		userData.highScore++
+		userData.streak++
+		clearCurrentGame()
+		computeScore()
 	}
 
 	const looseGame = () => {
 		status = gameStatus[2]
-		userData.highScore = 0
+		userData.streak = 0
+		clearCurrentGame()
 	}
 
 	const inputName = (e) => {
@@ -129,16 +165,19 @@
 
 	const keyInput = event => {
 		let val = event.key.toUpperCase()
-		if(!displayModal) {
-			if(keysMapped.find(k => k.value == val)) {
-				inputVal(val)
-			} else if(val == 'BACKSPACE') {
-				suppVal()
+		if(status == 'start') {
+			if(!displayModal) {
+				if(keysMapped.find(k => k.value == val)) {
+					inputVal(val)
+				} else if(val == 'BACKSPACE') {
+					suppVal()
+				} else if(val == 'ENTER') {
+					dabValue()
+				}
+				updateCurrentGame()
 			} else if(val == 'ENTER') {
-				dabValue()
+				displayModal = false
 			}
-		} else if(val == 'ENTER') {
-			displayModal = false
 		}
 	}
 
@@ -154,6 +193,33 @@
 		history = [...history, word]
 	}
 
+	const computeScore = () => {
+		let valids = word.map(l => l.value)
+		let bonus = 0
+		history.forEach((w, attempNumber) => {
+			w.forEach((l,i) => {
+				if(l.status == 'valid' && i > 0 && valids[i] != '') {
+					playerScore += Math.pow(3, config.maxTry - attempNumber)
+					valids[i] = ''
+				} else if(l.status == 'in-word') {
+					bonus++
+				}
+			})
+		})
+
+		if (bonus) {
+			playerScore *= 1 + bonus / 20
+		}
+
+		playerScore = Math.ceil(playerScore)
+		if (playerScore > userData.highScore) {
+			userData.highScore = playerScore
+		}
+
+		userHistory.games.push(history)
+		saveUserData()
+	}
+
 	const laPause = () => new Promise(resolve => setTimeout(resolve, revealDelay))
 
 	startGame()
@@ -166,19 +232,21 @@
 	<div class="custom-modal" on:click|self={() => displayModal = false}>
 	</div>
 	<div class="custom-modal-content">
-		<Input autofocus on:input={inputName} bind:value={userData.username}/>
+		<Input class="text-center" autofocus on:input={inputName} bind:value={userData.username}/>
 	</div>
 </div>
 {/if}
 <div class="top-container">
 	<span on:click={() => displayModal = true}>{userData.username}</span>
 	<span>{userData.highScore}</span>
+	<span>{userData.streak}</span>
 </div>
 
 {#if status != 'start'}
 	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">
 		<span class="answer">{stringWord}</span>
+		<span>Score : { playerScore }</span>
 		<button class="replay-btn" on:click={startGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
 	</div>
 {/if}

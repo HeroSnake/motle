@@ -39,9 +39,14 @@ export const config = {
     defaultLocalStorage: {
         userData: {
             username: 'No1', //no one
+            highScore: 0,
+            streak: 0
+        },
+        userHistory: {
+            current: [],
+            dab: [],
             games: [],
-            highScore: 0
+            word: ''
         }
-
     }
 }
