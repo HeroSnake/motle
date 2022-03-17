@@ -21,14 +21,16 @@
 	let dab = []
 	let playerScore
 	let displayModal = false
-	let userData = JSON.parse(localStorage.getItem('userData')) ?? {...config.defaultLocalStorage.userData}
-	let userHistory = JSON.parse(localStorage.getItem('userHistory')) ?? {...config.defaultLocalStorage.userHistory}
+	let userData = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
+	let userHistory = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
 
+	if(!localStorage.getItem('data')) {
+		localStorage.clear()
+	}
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
 	// $: console.log(userData)
 	// $: console.log(userHistory)
-
 
 	const saveUserData = () => {
 		localStorage.setItem('userData', JSON.stringify(userData))
@@ -278,7 +280,7 @@
 		{/each}
 	{/if}
 </Col>
-<!-- <h1>{stringWord}</h1> -->
+<h1>{stringWord}</h1>
 {#if status == 'start'}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">

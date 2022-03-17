@@ -37,12 +37,12 @@ export const config = {
         duration: 200
     },
     defaultLocalStorage: {
-        userData: {
+        data: {
             username: 'No1', //no one
             highScore: 0,
             streak: 0
         },
-        userHistory: {
+        history: {
             current: [],
             dab: [],
             games: [],
