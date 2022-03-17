@@ -33,8 +33,8 @@
 	// $: console.log(userHistory)
 
 	const saveUserData = () => {
-		localStorage.setItem('userData', JSON.stringify(userData))
-		localStorage.setItem('userHistory', JSON.stringify(userHistory))
+		localStorage.setItem('data', JSON.stringify(userData))
+		localStorage.setItem('history', JSON.stringify(userHistory))
 	}
 
 	const startGame = () => {
