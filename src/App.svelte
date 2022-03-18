@@ -6,9 +6,19 @@
 	import { arrowDown, arrowLeft, repeat } from 'svelte-awesome/icons'
 	import { blur } from 'svelte/transition'
 
+	import { user } from './stores.js';
+
 	const revealDelay = config.revealDelay
 	const gameStatus = config.gameStatus
 	const transitions = config.transitions
+
+	let userData
+	let userHistory
+	const unsubscribe = user.subscribe(value => {
+		userData = value.userData
+		userHistory = value.userHistory
+	});
+	$: console.log(userData, userHistory)
 
 	let maxTry = config.maxTry
 	let history = []
@@ -21,8 +31,6 @@
 	let dab = []
 	let playerScore
 	let displayModal = false
-	let userData = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
-	let userHistory = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
 
 	if(!localStorage.getItem('data')) {
 		localStorage.clear()
@@ -42,7 +50,7 @@
 		status = gameStatus[0]
 		history = []
 		playerScore = 0
-		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength)])
+		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength && !w.includes('-') )])
 		if((userHistory.word ?? '') == '') {
 			const idx = Math.floor(Math.random() * wordsFiltered.length)
 			stringWord = wordsFiltered[idx]
@@ -51,7 +59,8 @@
 			dab = []
 			history = []
 		} else {
-			stringWord = wordsFiltered[userHistory.word]
+			stringWord = wordsFiltered[userHistory.word % wordsFiltered.length]
+			console.log(userHistory.word)
 			word = [...stringWord].map(l => ({ value: l, status: ''}))
 			history = userHistory.current
 			dab = userHistory.dab
@@ -102,10 +111,11 @@
 		if (!wordsFiltered.includes(dabString.join(''))) {
 			error = 'error'
 			const inter = setInterval(() => error = error.length ? '' : 'error', 250)
+			clearInterval(inter)
 			setTimeout(() => {
 				clearInterval(inter)
 				error = ''
-			}, 2000)
+			}, 250)
 			return
 		}
 		let entry = []
@@ -239,9 +249,9 @@
 </div>
 {/if}
 <div class="top-container">
-	<span on:click={() => displayModal = true}>{userData.username}</span>
-	<span>{userData.highScore}</span>
-	<span>{userData.streak}</span>
+	<span on:click={() => displayModal = true}>{@html userData.username}</span>
+	<span><span style="font-size:10px;">HighScore :</span>&nbsp;{userData.highScore}</span>
+	<span><span style="font-size:10px;">Streak :</span>&nbsp;{userData.streak}</span>
 </div>
 
 {#if status != 'start'}

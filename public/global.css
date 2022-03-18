@@ -85,6 +85,12 @@ button:focus {
     align-items: center;
 }
 
+.top-container > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .custom-modal {
     background-color: #000000a6;
     height: 100vh;
