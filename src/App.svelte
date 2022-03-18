@@ -5,8 +5,7 @@
 	import Icon from 'svelte-awesome'
 	import { arrowDown, arrowLeft, repeat } from 'svelte-awesome/icons'
 	import { blur } from 'svelte/transition'
-
-	import { user } from './stores.js';
+	import { user } from './stores.js'
 
 	const revealDelay = config.revealDelay
 	const gameStatus = config.gameStatus
@@ -17,8 +16,7 @@
 	const unsubscribe = user.subscribe(value => {
 		userData = value.userData
 		userHistory = value.userHistory
-	});
-	$: console.log(userData, userHistory)
+	})
 
 	let maxTry = config.maxTry
 	let history = []
@@ -31,6 +29,7 @@
 	let dab = []
 	let playerScore
 	let displayModal = false
+	let sharingString
 
 	if(!localStorage.getItem('data')) {
 		localStorage.clear()
@@ -39,6 +38,7 @@
 	$: dabString = dab.map(l => l.value)
 	// $: console.log(userData)
 	// $: console.log(userHistory)
+	$: console.log(history)
 
 	const saveUserData = () => {
 		localStorage.setItem('data', JSON.stringify(userData))
@@ -49,6 +49,7 @@
 		keysMapped = Array.from(config.keys, k => ({...k}))
 		status = gameStatus[0]
 		history = []
+		sharingString = sharingString ? sharingString : ''
 		playerScore = 0
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength && !w.includes('-') )])
 		if((userHistory.word ?? '') == '') {
@@ -60,7 +61,6 @@
 			history = []
 		} else {
 			stringWord = wordsFiltered[userHistory.word % wordsFiltered.length]
-			console.log(userHistory.word)
 			word = [...stringWord].map(l => ({ value: l, status: ''}))
 			history = userHistory.current
 			dab = userHistory.dab
@@ -162,6 +162,12 @@
 		userData.streak++
 		clearCurrentGame()
 		computeScore()
+		console.log(history)
+		history.forEach(w => w.forEach(l => {
+			console.log(l)
+		}))
+		// sharingString = history
+		console.log(sharingString)
 	}
 
 	const looseGame = () => {
@@ -250,15 +256,15 @@
 {/if}
 <div class="top-container">
 	<span on:click={() => displayModal = true}>{@html userData.username}</span>
-	<span><span style="font-size:10px;">HighScore :</span>&nbsp;{userData.highScore}</span>
-	<span><span style="font-size:10px;">Streak :</span>&nbsp;{userData.streak}</span>
+	<span><span style="font-size:10px;">HighScore</span>&nbsp;|&nbsp;{userData.highScore}</span>
+	<span><span style="font-size:10px;">Streak</span>&nbsp;|&nbsp;{userData.streak}</span>
 </div>
 
 {#if status != 'start'}
 	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">
 		<span class="answer">{stringWord}</span>
-		<span>Score : { playerScore }</span>
+		<span>Score | { playerScore }</span>
 		<button class="replay-btn" on:click={startGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
 	</div>
 {/if}
@@ -290,7 +296,7 @@
 		{/each}
 	{/if}
 </Col>
-<!-- <h1>{stringWord}</h1> -->
+<h1>{stringWord}</h1>
 {#if status == 'start'}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
