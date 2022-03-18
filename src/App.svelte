@@ -51,7 +51,7 @@
 		history = []
 		sharingString = sharingString ? sharingString : ''
 		playerScore = 0
-		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length < config.maxLength && !w.includes('-') )])
+		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength && !w.includes('-') )])
 		if((userHistory.word ?? '') == '') {
 			const idx = Math.floor(Math.random() * wordsFiltered.length)
 			stringWord = wordsFiltered[idx]
@@ -164,7 +164,7 @@
 		computeScore()
 		console.log(history)
 		history.forEach(w => w.forEach(l => {
-			console.log(l)
+			console.log(l.status)
 		}))
 		// sharingString = history
 		console.log(sharingString)
@@ -296,7 +296,7 @@
 		{/each}
 	{/if}
 </Col>
-<h1>{stringWord}</h1>
+<!-- <h1>{stringWord}</h1> -->
 {#if status == 'start'}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
