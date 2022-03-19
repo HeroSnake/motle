@@ -75,10 +75,10 @@
 	}
 
 	const suppVal = () => {
-		dab[inputIndex].value = ''
-		if(inputIndex > 1) {
+		if(inputIndex > 1 && dab[inputIndex].value == '') {
 			inputIndex--
 		}
+		dab[inputIndex].value = ''
 	}
 
 	const updateCurrentGame = () => {
