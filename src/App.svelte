@@ -310,7 +310,7 @@
 		{/each}
 	{/if}
 </Col>
-<h1>{stringWord}</h1>
+<!-- <h1>{stringWord}</h1> -->
 {#if status == 'start'}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
