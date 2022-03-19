@@ -62,15 +62,17 @@
 			history = userHistory.current
 		}
 		dab = []
-		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: 'unchecked'}))
+		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: i == 0 ? 'valid' : 'unchecked'}))
 		saveUserData()
 	}
 
 	const inputVal = val => {
 		const value = val.toUpperCase()
-		dab[inputIndex].value = value
-		if(inputIndex < word.length - 1) {
-			inputIndex++
+		if(!(inputIndex == 1 && value == dab[0].value)) {
+			dab[inputIndex].value = value
+			if(inputIndex < word.length - 1) {
+				inputIndex++
+			}
 		}
 	}
 
@@ -218,7 +220,7 @@
 		}
 		history = [...history, word]
 		dab = []
-		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: 'unchecked'}))
+		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: i == 0 ? 'valid' : 'unchecked'}))
 		inputIndex = 1
 	}
 
