@@ -32,7 +32,7 @@
 	let sharingString
 	let inputIndex
 
-	if(!localStorage.getItem('data')) {
+	if (!localStorage.getItem('data')) {
 		localStorage.clear()
 	}
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
@@ -50,7 +50,7 @@
 		playerScore = 0
 		inputIndex = 1
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
-		if((userHistory.word ?? '') == '') {
+		if ((userHistory.word ?? '') == '') {
 			const idx = Math.floor(Math.random() * wordsFiltered.length)
 			stringWord = wordsFiltered[idx]
 			word = [...stringWord].map(l => ({ value: l, status: ''}))
@@ -68,16 +68,16 @@
 
 	const inputVal = val => {
 		const value = val.toUpperCase()
-		if(!(inputIndex == 1 && value == dab[0].value)) {
+		if (!(inputIndex == 1 && value == dab[0].value)) {
 			dab[inputIndex].value = value
-			if(inputIndex < word.length - 1) {
+			if (inputIndex < word.length - 1) {
 				inputIndex++
 			}
 		}
 	}
 
 	const suppVal = () => {
-		if(inputIndex > 1 && dab[inputIndex].value == '') {
+		if (inputIndex > 1 && dab[inputIndex].value == '') {
 			inputIndex--
 		}
 		dab[inputIndex].value = ''
@@ -98,44 +98,46 @@
 	}
 
 	const dabValue = async () => {
-		if(dab.findIndex(l => l.value == '') != -1 || status != 'start') {
+		if (dab.findIndex(l => l.value == '') != -1 || status != 'start') {
 			return
 		}
+
 		if (!wordsFiltered.includes(dabString.join(''))) {
 			error = 'error'
-			const inter = setInterval(() => error = error.length ? '' : 'error', 250)
-			clearInterval(inter)
-			setTimeout(() => {
-				clearInterval(inter)
-				error = ''
-			}, 250)
+			await laPause(revealDelay)
+			error = ''
 			return
 		}
+
+		status = 'pending'
 		let entry = []
 		let unchecked = []
 
 		for (let i = 0; i < word.length; i++) {
 			let letter = { value: dab[i].value.toUpperCase(), status: 'invalid' }
-			if(letter.value == word[i].value) {
+			const keyIdx = keysMapped.findIndex(k => k.value == letter.value)
+			if (letter.value == word[i].value) {
 				word[i].status = 'valid'
-				keysMapped.find(k => k.value == letter.value).status = 'valid'
+				keysMapped[keyIdx].status = 'valid'
 				letter.status = 'valid'
 			} else {
 				unchecked.push(word[i].value)
 			}
 			entry.push(letter)
 		}
+
 		entry.map(letter => {
-			if(letter.status == 'valid') {
+			if (letter.status == 'valid') {
 				return letter
 			}
 			const idx = unchecked.indexOf(letter.value)
-			if(idx != -1) {
+			const keyIdx = keysMapped.findIndex(k => k.value == letter.value)
+			if (idx != -1) {
 				letter.status = 'in-word'
-				keysMapped.find(k => k.value == letter.value).status = 'in-word'
+				keysMapped[keyIdx].status = 'in-word'
 				unchecked.splice(idx, 1)
-			} else if(word.findIndex(l => l.value == letter.value) == -1) {
-				keysMapped.find(k => k.value == letter.value).status = 'invalid'
+			} else if (word.findIndex(l => l.value == letter.value) == -1) {
+				keysMapped[keyIdx].status = 'invalid'
 			}
 		})
 
@@ -170,14 +172,14 @@
 	}
 
 	const computeSharing = () => {
-		sharingString = config.sharingHheader + "\n"
+		sharingString = config.sharingHeader + "\n"
 		userHistory.games.slice(-1).pop().forEach(w => {
 			w.forEach(l => {
-				if(l.status == 'valid'){
+				if (l.status == 'valid'){
 					sharingString += '🟩'
-				} else if(l.status == 'in-word') {
+				} else if (l.status == 'in-word') {
 					sharingString += '🟨'
-				} else if(l.status = 'invalid'){
+				} else if (l.status = 'invalid'){
 					sharingString += '⬛'
 				}
 			})
@@ -188,22 +190,18 @@
 
 	const keyInput = event => {
 		let val = event.key.toUpperCase()
-		if(status == 'start') {
-			if(!displayModal) {
-				if(keysMapped.find(k => k.value == val)) {
+		if (status == 'start') {
+			if (!displayModal) {
+				if (keysMapped.find(k => k.value == val)) {
 					inputVal(val)
-				} else if(val == 'BACKSPACE') {
+				} else if (val == 'BACKSPACE') {
 					suppVal()
-				} else if(val == 'ENTER') {
+				} else if (val == 'ENTER') {
 					dabValue()
-				} else if(val == 'ARROWRIGHT') { // +
-					if(inputIndex < word.length - 1) {
-						inputIndex++
-					}
-				} else if(val == 'ARROWLEFT') { // -
-					if(inputIndex > 1) {
-						inputIndex--
-					}
+				} else if (val == 'ARROWRIGHT' && inputIndex < word.length - 1) {
+					inputIndex++
+				} else if (val == 'ARROWLEFT' && inputIndex > 1) {
+					inputIndex--
 				}
 				updateCurrentGame()
 			} else if(val == 'ENTER') {
@@ -216,12 +214,13 @@
 		dab = word.map(l => ({...l, status: 'unchecked'}))
 		for (let [i, l] of word.entries()) {
 			dab[i] = l
-			await laPause()
+			await laPause(revealDelay)
 		}
 		history = [...history, word]
 		dab = []
 		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: i == 0 ? 'valid' : 'unchecked'}))
 		inputIndex = 1
+		status = 'start'
 	}
 
 	const computeScore = () => {
@@ -229,10 +228,10 @@
 		let bonus = 0
 		history.forEach((w, attempNumber) => {
 			w.forEach((l,i) => {
-				if(l.status == 'valid' && i > 0 && valids[i] != '') {
+				if (l.status == 'valid' && i > 0 && valids[i] != '') {
 					playerScore += Math.pow(3, config.maxTry - attempNumber)
 					valids[i] = ''
-				} else if(l.status == 'in-word') {
+				} else if (l.status == 'in-word') {
 					bonus++
 				}
 			})
@@ -256,13 +255,13 @@
 		navigator.clipboard.writeText(sharingString)
 	}
 
-	const customInput = (index) => {
-		if(index > 0) {
+	const customInput = index => {
+		if (index > 0) {
 			inputIndex = index
 		}
 	}
 
-	const laPause = () => new Promise(resolve => setTimeout(resolve, revealDelay))
+	const laPause = t => new Promise(resolve => setTimeout(resolve, t))
 
 	startGame()
 </script>
@@ -284,7 +283,7 @@
 	<span><span style="font-size:10px;">Streak</span>&nbsp;|&nbsp;{userData.streak}</span>
 </div>
 
-{#if status != 'start'}
+{#if !['pending', 'start'].includes(status)}
 	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">
 		<span class="answer">{stringWord}</span>
@@ -303,7 +302,7 @@
 		{/each}
 	</div>
 	{/each}
-	{#if status == 'start'}
+	{#if ['pending', 'start'].includes(status)}
 		<div class="words-container">
 			{#each word as _, index}
 				<div class="word-block {inputIndex == index ? 'input-index' : ''} { error } {dab[index]?.status ?? ''}" on:click={() => customInput(index)}>
@@ -324,7 +323,7 @@
 {#if userData.username == 'tgm'}
 	<h1>{stringWord}</h1>
 {/if}
-{#if status == 'start'}
+{#if ['pending', 'start'].includes(status)}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
 			{#each keysMapped as key, index}

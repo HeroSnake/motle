@@ -27,7 +27,7 @@ export const config = {
         { value: 'B', status: 'unchecked' },
         { value: 'N', status: 'unchecked' }
     ],
-    gameStatus: ['start', 'success', 'fail'],
+    gameStatus: ['start', 'success', 'fail', 'pending'],
     maxTry: 6,
     minLength: 5,
     maxLength: 8,
@@ -36,7 +36,7 @@ export const config = {
         time: 100,
         duration: 200
     },
-    sharingHheader: 'Motle ♾️',
+    sharingHeader: 'Motle ♾️',
     defaultLocalStorage: {
         data: {
             username: 'No1', //no one
