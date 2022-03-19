@@ -26,7 +26,7 @@
 	let wordsFiltered = []
 	let stringWord
 	let word = []
-	let dab = []
+	let dab
 	let playerScore
 	let displayModal = false
 	let sharingString
@@ -61,6 +61,7 @@
 			word = [...stringWord].map(l => ({ value: l, status: ''}))
 			history = userHistory.current
 		}
+		dab = []
 		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: 'unchecked'}))
 		saveUserData()
 	}
@@ -178,8 +179,8 @@
 					sharingString += '⬛'
 				}
 			})
-			sharingString += "\nScore | " + playerScore
 		})
+		sharingString += "\nScore | " + playerScore
 	}
 
 	const keyInput = event => {
@@ -206,8 +207,10 @@
 			dab[i] = l
 			await laPause()
 		}
-		word.forEach(() => dab.push({value: '', status: 'unchecked'}))
 		history = [...history, word]
+		dab = []
+		word.forEach((l,i) => dab.push({value: i == 0 ? l.value : '', status: 'unchecked'}))
+		inputIndex = 1
 	}
 
 	const computeScore = () => {
