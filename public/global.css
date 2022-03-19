@@ -137,6 +137,7 @@ button:focus {
     text-transform: uppercase;
     height: 50px;
     width: 50px;
+    border-radius: 5px;
 }
 
 .word-block input {
@@ -186,9 +187,7 @@ button:focus {
 }
 
 .input-index {
-    border: 1px solid #222;
-    outline: dashed #000;
-    filter: drop-shadow(0 0 0.55rem #1488dc);
+    filter: drop-shadow(0 0 0.55rem #fff);
 }
 
 .valid {
@@ -248,9 +247,13 @@ button:focus {
     font-size: 50px;
 }
 
-.replay-btn {
+.buttons-block {
+    display: flex;
+}
+
+.buttons-block > button {
     background: transparent;
-    font-size: 2em;
+    font-size: 1em;
     color: #fff;
     padding: 10px;
     border-radius: 10px;
@@ -261,8 +264,25 @@ button:focus {
     margin-top: 20px;
 }
 
-.replay-btn:hover {
+.buttons-block > button:hover {
     color: #000;
+    background-color: #fff;
+}
+
+.def-block {
+    position: relative;
+}
+
+.close-def-btn {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    border: 1px solid #ccc;
+    border-radius: 21px;
+    padding: 0px 6px;
+}
+
+.close-def-btn:hover {
     background-color: #fff;
 }
 

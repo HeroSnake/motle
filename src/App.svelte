@@ -3,8 +3,8 @@
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
-	import { arrowDown, arrowLeft, repeat, share } from 'svelte-awesome/icons'
-	import { blur } from 'svelte/transition'
+	import { arrowDown, arrowLeft, repeat, share, close } from 'svelte-awesome/icons'
+	import { blur, slide } from 'svelte/transition'
 	import { user } from './stores.js'
 
 	const revealDelay = config.revealDelay
@@ -31,10 +31,12 @@
 	let displayModal = false
 	let sharingString
 	let inputIndex
+	let displayDef
 
 	if (!localStorage.getItem('data')) {
 		localStorage.clear()
 	}
+
 	$: placeHolderNumber = Math.abs(maxTry - history.length - 1)
 	$: dabString = dab.map(l => l.value)
 
@@ -49,6 +51,7 @@
 		history = []
 		playerScore = 0
 		inputIndex = 1
+		displayDef = false
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
 		if ((userHistory.word ?? '') == '') {
 			const idx = Math.floor(Math.random() * wordsFiltered.length)
@@ -286,10 +289,18 @@
 {#if !['pending', 'start'].includes(status)}
 	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<img src="/img/{status}.gif" alt="{status}">
-		<span class="answer">{stringWord}</span>
+		<span class="answer" on:click={() => displayDef = !displayDef}>{stringWord}</span>
+		{#if displayDef}
+			<div class="def-block" transition:slide>
+				<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="https://fr.wiktionary.org/wiki/{stringWord.toLowerCase()}#Étymologie"></iframe>
+				<button class="close-def-btn" on:click={() => displayDef = false}><Icon data={ close } scale={1}/></button>
+			</div>
+		{/if}
 		<span>Score | { playerScore }</span>
-		<button class="replay-btn" on:click={startGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
-		<button class="replay-btn" on:click={getSharing}><Icon data={ share } scale={2}/>Partager</button>
+		<div class="buttons-block">
+			<button on:click={startGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
+			<button on:click={getSharing}><Icon data={ share } scale={2}/>Partager</button>
+		</div>
 	</div>
 {/if}
 <Col xs="12" lg="8" class="main-container">
