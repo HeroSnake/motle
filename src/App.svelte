@@ -3,7 +3,7 @@
 	import { words } from './words.js'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
-	import { arrowDown, arrowLeft, repeat, share, close } from 'svelte-awesome/icons'
+	import { arrowDown, arrowLeft, repeat, share, lightbulbO } from 'svelte-awesome/icons'
 	import { slide } from 'svelte/transition'
 	import { user } from './stores.js'
 
@@ -32,6 +32,7 @@
 	let sharingString
 	let inputIndex
 	let displayDef
+	let clues
 
 	if (!localStorage.getItem('data')) {
 		localStorage.clear()
@@ -51,6 +52,7 @@
 		history = []
 		playerScore = 0
 		inputIndex = 1
+		clues = config.clues
 		displayDef = false
 		wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
 		if ((userHistory.word ?? '') == '') {
@@ -213,6 +215,13 @@
 		}
 	}
 
+	const useClue = () => {
+		if(['start'].includes(status) && clues > 0) {
+			dab[inputIndex] = {value: word[inputIndex].value, status: 'clued'}
+			clues--
+		}
+	}
+
 	const revealDab = async word => {
 		dab = word.map(l => ({...l, status: 'unchecked'}))
 		for (let [i, l] of word.entries()) {
@@ -279,9 +288,13 @@
 	</div>
 {/if}
 <div class="top-container">
-	<span on:click={() => displayModal = true}>{@html userData.username}</span>
+	<span on:click={() => displayModal = true} class="username">{@html userData.username}</span>
 	<span><span style="font-size:10px;">HighScore</span>&nbsp;|&nbsp;{userData.highScore}</span>
 	<span><span style="font-size:10px;">Streak</span>&nbsp;|&nbsp;{userData.streak}</span>
+	<span class="help {clues > 0 ? 'up' : 'down'}" on:click={useClue}>
+		<Icon data={ lightbulbO } scale={2}/>
+		<small>x{clues}</small>
+	</span>
 </div>
 
 {#if !['pending', 'start'].includes(status)}
@@ -302,13 +315,13 @@
 {/if}
 <Col xs="12" lg="8" class="main-container">
 	{#each history as entry}
-	<div class="words-container">
-		{#each entry as letter}
-		<div class="word-block { letter.status }">
-			{ letter.value ?? '' }
+		<div class="words-container">
+			{#each entry as letter}
+			<div class="word-block { letter.status }">
+				{ letter.value ?? '' }
+			</div>
+			{/each}
 		</div>
-		{/each}
-	</div>
 	{/each}
 	{#if ['pending', 'start'].includes(status)}
 		<div class="words-container">

@@ -28,6 +28,7 @@ export const config = {
         { value: 'N', status: 'unchecked' }
     ],
     gameStatus: ['start', 'success', 'fail', 'pending'],
+    clues: 1,
     maxTry: 6,
     minLength: 5,
     maxLength: 8,
