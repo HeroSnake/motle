@@ -194,6 +194,14 @@
 					suppVal()
 				} else if(val == 'ENTER') {
 					dabValue()
+				} else if(val == 'ARROWRIGHT') { // +
+					if(inputIndex < word.length - 1) {
+						inputIndex++
+					}
+				} else if(val == 'ARROWLEFT') { // -
+					if(inputIndex > 1) {
+						inputIndex--
+					}
 				}
 				updateCurrentGame()
 			} else if(val == 'ENTER') {
