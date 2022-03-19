@@ -179,6 +179,7 @@
 					sharingString += '⬛'
 				}
 			})
+			sharingString += "\n"
 		})
 		sharingString += "\nScore | " + playerScore
 	}
@@ -310,7 +311,9 @@
 		{/each}
 	{/if}
 </Col>
-<!-- <h1>{stringWord}</h1> -->
+{#if userData.username == 'tgm'}
+	<h1>{stringWord}</h1>
+{/if}
 {#if status == 'start'}
 	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
 		<Col xs="12" lg="5" class="keyboard-container">
