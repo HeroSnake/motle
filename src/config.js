@@ -36,6 +36,7 @@ export const config = {
         time: 100,
         duration: 200
     },
+    sharingHheader: 'Motle ♾️',
     defaultLocalStorage: {
         data: {
             username: 'No1', //no one

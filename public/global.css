@@ -186,6 +186,12 @@ button:focus {
     /* width: 100%; */
 }
 
+.input-index {
+    border: 1px solid #222;
+    outline: dashed #000;
+    filter: drop-shadow(0 0 0.55rem #1488dc);
+}
+
 .valid {
     background-color: green;
 }
