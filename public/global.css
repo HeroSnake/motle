@@ -249,6 +249,7 @@ button:focus {
 
 .buttons-block {
     display: flex;
+    gap: 20px;
 }
 
 .buttons-block > button {
@@ -269,21 +270,13 @@ button:focus {
     background-color: #fff;
 }
 
-.def-block {
-    position: relative;
-}
-
-.close-def-btn {
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    border: 1px solid #ccc;
-    border-radius: 21px;
-    padding: 0px 6px;
-}
-
 .close-def-btn:hover {
     background-color: #fff;
+}
+
+iframe {
+    background-color: #000 !important;
+    color: #e6e6e6 !important;
 }
 
 .keyboard-letter:active,

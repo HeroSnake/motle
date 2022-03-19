@@ -4,7 +4,7 @@
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
 	import { arrowDown, arrowLeft, repeat, share, close } from 'svelte-awesome/icons'
-	import { blur, slide } from 'svelte/transition'
+	import { slide } from 'svelte/transition'
 	import { user } from './stores.js'
 
 	const revealDelay = config.revealDelay
@@ -272,13 +272,11 @@
 <Styles />
 <svelte:window on:keydown={keyInput}/>
 {#if displayModal}
-<div>
-	<div class="custom-modal" on:click|self={() => displayModal = false}>
+	<div transition:slide class="custom-modal" on:click|self={() => displayModal = false}>
 	</div>
-	<div class="custom-modal-content">
+	<div transition:slide class="custom-modal-content">
 		<Input class="text-center" autofocus on:input={inputName} bind:value={userData.username}/>
 	</div>
-</div>
 {/if}
 <div class="top-container">
 	<span on:click={() => displayModal = true}>{@html userData.username}</span>
@@ -287,13 +285,12 @@
 </div>
 
 {#if !['pending', 'start'].includes(status)}
-	<div class="gif-container {status}" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
+	<div class="gif-container {status}" transition:slide>
 		<img src="/img/{status}.gif" alt="{status}">
 		<span class="answer" on:click={() => displayDef = !displayDef}>{stringWord}</span>
 		{#if displayDef}
-			<div class="def-block" transition:slide>
+			<div transition:slide>
 				<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="https://fr.wiktionary.org/wiki/{stringWord.toLowerCase()}#Étymologie"></iframe>
-				<button class="close-def-btn" on:click={() => displayDef = false}><Icon data={ close } scale={1}/></button>
 			</div>
 		{/if}
 		<span>Score | { playerScore }</span>
@@ -335,7 +332,7 @@
 	<h1>{stringWord}</h1>
 {/if}
 {#if ['pending', 'start'].includes(status)}
-	<div class="keyboard" transition:blur={{ delay: transitions.delay, duration: transitions.duration }}>
+	<div class="keyboard" transition:slide>
 		<Col xs="12" lg="5" class="keyboard-container">
 			{#each keysMapped as key, index}
 				{#if index == 20}
