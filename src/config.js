@@ -27,7 +27,6 @@ export const config = {
         { value: 'B', status: 'unchecked' },
         { value: 'N', status: 'unchecked' }
     ],
-    gameStatus: ['start', 'success', 'fail', 'pending'],
     clues: 1,
     maxTry: 6,
     minLength: 5,
@@ -45,10 +44,9 @@ export const config = {
             streak: 0
         },
         history: {
-            current: [],
-            dab: [],
-            games: [],
-            word: ''
+            attempts: [],
+            word: -1,
+            clues: []
         }
     }
 }
