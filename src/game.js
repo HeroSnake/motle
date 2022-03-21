@@ -14,6 +14,34 @@ function createGame()
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
     const storeGame = history => localStorage.setItem('history', JSON.stringify(history))
     const getNextAttempt = word => [...word].map((l, i) => ({ value: !i ? l : '', status: !i ? 'valid' :  'unchecked'}))
+    const unique = (value, index, self) => self.indexOf(value) === index
+    const initKeyboard = () => {
+        let status = 'unchecked'
+        const valids = []
+        const invalids = []
+        const inWord = []
+        userHistory.attempts.map(w => w.map(k => {
+            if (k.status == 'in-word') {
+                inWord.push(k.value)
+            } else if (k.status == 'invalid') {
+                invalids.push(k.value)
+            } else if (k.status == 'valid') {
+                valids.push(k.value)
+            }
+        }))
+        return config.keys.map(k => {
+            status = 'unchecked'
+            if (valids.includes(k.value)) {
+                status = 'valid'
+            } else if (inWord.includes(k.value)) {
+                status = 'in-word'
+            } else if (invalids.includes(k.value)) {
+                status = 'invalid'
+            }
+            return {...k, status}
+        })
+    }
+
 
     // INIT
     if (userHistory.word == -1) {
@@ -21,7 +49,6 @@ function createGame()
         word = wordsFiltered[idx]
         userHistory.attempts = [getNextAttempt(word)]
         userHistory.word = idx
-        userHistory.clues = []
     } else {
         word = wordsFiltered[userHistory.word % wordsFiltered.length]
         // TODO: reset du keyboard au chargement
@@ -34,7 +61,8 @@ function createGame()
         word: word,
         inputIndex: 1,
         attempts: userHistory.attempts,
-        keyboard: Array.from(config.keys, k => ({...k})),
+        fundedLetters: userHistory.fundedLetters,
+        keyboard: initKeyboard(),
         clues: 1,
         cluedIdx: userHistory.clues
     })
@@ -47,6 +75,7 @@ function createGame()
         userString = currentWord.map(l => l.value).join('')
         userHistory.attempts = g.attempts
         userHistory.clues = g.cluedIdx
+        userHistory.fundedLetters = g.fundedLetters
         storeGame(userHistory)
     })
 
@@ -59,8 +88,8 @@ function createGame()
         game.attempts = [getNextAttempt(wordsFiltered[idx])]
         game.inputIndex = 1
         game.word = wordsFiltered[idx]
+        game.fundedLetters = []
         userHistory.word = idx
-        userHistory.clues = []
         game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
 
         return game
@@ -78,14 +107,17 @@ function createGame()
             game.attempts[game.attempts.length - 1][game.inputIndex].value = letter
         }
 
-        if (letter != '' && game.inputIndex < game.word.length - 1) {
+        // compute word funded letter
+        if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length && [...currentWord.map((l, i) => !i ? '' : l.value)].filter(l => l == '').length == currentWord.length) {
+            game.fundedLetters.map(i => game.attempts[game.attempts.length - 1][i].value = [...game.word][i])
+        }
+
+        if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
             game.inputIndex++
         }
 
         game.cluedIdx.map(i => {
-            console.log(i);
             if (currentWord[i].value == '') {
-                console.log('r');
                 game.attempts[game.attempts.length - 1][game.inputIndex].value = [...game.word][i]
             }
         })
@@ -157,6 +189,10 @@ function createGame()
             await laPause(config.revealDelay)
         }
 
+        if (valids.length) {
+            gameInstance.fundedLetters = [...gameInstance.fundedLetters, ...valids].filter(unique)
+        }
+
         gameInstance.inputIndex = 1
         update(g => gameInstance)
 
@@ -167,6 +203,7 @@ function createGame()
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
             updateGameStatus('start')
+            suppVal()
         }
 
         // saveUserData()

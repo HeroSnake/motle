@@ -46,7 +46,8 @@ export const config = {
         history: {
             attempts: [],
             word: -1,
-            clues: []
+            clues: [],
+            fundedLetters: []
         }
     }
 }
