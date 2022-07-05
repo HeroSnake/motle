@@ -6,12 +6,14 @@ function createGame()
 {
     let gameInstance, currentLetter, currentWord, userString
     const gameStatus = ['start', 'success', 'fail', 'pending']
+    let userData = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
     let userHistory = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
 
     // Helpers
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
+    const storeUserData = userData => localStorage.setItem('data', JSON.stringify(userData))
     const storeGame = history => localStorage.setItem('history', JSON.stringify(history))
     const getNextAttempt = word => [...word].map((l, i) => ({ value: !i ? l : '', status: !i ? 'valid' :  'unchecked'}))
     const unique = (value, index, self) => self.indexOf(value) === index
@@ -64,6 +66,7 @@ function createGame()
         fundedLetters: userHistory.fundedLetters,
         keyboard: initKeyboard(),
         clues: 1,
+        userData: userData,
         cluedIdx: userHistory.clues
     })
 
@@ -76,6 +79,7 @@ function createGame()
         userHistory.attempts = g.attempts
         userHistory.clues = g.cluedIdx
         userHistory.fundedLetters = g.fundedLetters
+        storeUserData(userData)
         storeGame(userHistory)
     })
 
@@ -91,6 +95,7 @@ function createGame()
         game.fundedLetters = []
         userHistory.word = idx
         game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
+        game.cluedIdx = []
 
         return game
     })
@@ -118,10 +123,10 @@ function createGame()
 
         game.cluedIdx.map(i => {
             if (currentWord[i].value == '') {
+                console.log([...game.word])
                 game.attempts[game.attempts.length - 1][game.inputIndex].value = [...game.word][i]
             }
         })
-
         return game
     })
 
@@ -206,18 +211,19 @@ function createGame()
             suppVal()
         }
 
-        // saveUserData()
+        storeUserData(userData)
     }
 
     const finishGame = status => update(game => {
         game.status = status
 
         if (status == 'success') {
-            getScore()
-            // userData.streak++
+            if(getScore() > userData.highScore) {
+                userData.highScore = getScore()
+            }
+            userData.streak++
         } else if (status == 'fail') {
-            // userData.streak = 0
-            // TODO: streak user + highscore
+            userData.streak = 0
         }
 
         storeGame({ word: -1, attempts: []})
@@ -234,6 +240,7 @@ function createGame()
             w.forEach((l,i) => {
                 if (l.status == 'valid' && i > 0 && valids[i] != '') {
                     playerScore += Math.pow(3, config.maxTry - attemptNumber)
+                    bonus += config.keys.find(k => k.value == l.value).score
                     valids[i] = ''
                 } else if (l.status == 'in-word') {
                     bonus++
@@ -246,10 +253,6 @@ function createGame()
         }
 
         playerScore = Math.ceil(playerScore)
-        // if (playerScore > userData.highScore) {
-        //     userData.highScore = playerScore
-        // }
-
         return playerScore
     }
 

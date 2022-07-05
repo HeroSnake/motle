@@ -2,28 +2,18 @@
 	import { Styles, Col, Input } from 'sveltestrap'
 	import { config } from './config.js'
 	import Icon from 'svelte-awesome'
-	import { arrowDown, arrowLeft, repeat, share, lightbulbO } from 'svelte-awesome/icons'
+	import { arrowDown, arrowLeft, repeat, share, lightbulbO, star, clockO, user } from 'svelte-awesome/icons'
 	import { slide } from 'svelte/transition'
-	import { user } from './stores.js'
 	import { game } from './game.js'
 
-	let userData
 	let displayModal = false
 	let displayDef
 
-	const unsubscribe = user.subscribe(value => {
-		userData = value.userData
-	})
-
 	$: placeHolderNumber = Math.abs(config.maxTry - $game.attempts.length)
 
-	const saveUserData = () => {
-		localStorage.setItem('data', JSON.stringify(userData))
-	}
-
 	const inputName = (e) => {
-		userData.username = e.target.value
-		saveUserData()
+		$game.userData.username = e.target.value
+		store$game.userData($game.userData)
 	}
 
 	const keyInput = event => {
@@ -54,16 +44,17 @@
 	<div transition:slide class="custom-modal" on:click|self={() => displayModal = false}>
 	</div>
 	<div transition:slide class="custom-modal-content">
-		<Input class="text-center" autofocus on:input={inputName} bind:value={userData.username}/>
+		<Input class="text-center" autofocus on:input={inputName} bind:value={$game.userData.username}/>
 	</div>
 {/if}
 <div class="top-container">
-	<span on:click={() => displayModal = true} class="username">{@html userData.username}</span>
-	<span><span style="font-size:10px;">HighScore</span>&nbsp;|&nbsp;{userData.highScore}</span>
-	<span><span style="font-size:10px;">Streak</span>&nbsp;|&nbsp;{userData.streak}</span>
+	<img class="logo" src="/logo.png" alt="logo">
+	<span on:click={() => displayModal = true} class="username"><Icon data={ user }/>&nbsp;{@html $game.userData.username}</span>
+	<span><Icon data={ star }/>&nbsp;{$game.userData.highScore}</span>
+	<span><Icon data={ clockO }/>&nbsp;{$game.userData.streak}</span>
 	<span class="help {$game.clues > 0 ? 'up' : 'down'}" on:click={game.useClue}>
 		<Icon data={ lightbulbO } scale={2}/>
-		<small>x{$game.clues}</small>
+		<small>x{$game.clues - $game.cluedIdx.length}</small>
 	</span>
 </div>
 
@@ -103,7 +94,7 @@
 		{/each}
 	{/if}
 </Col>
-{#if userData.username == 'tgm'}
+{#if $game.userData.username == 'tgm'}
 	<h1>{$game.word}</h1>
 {/if}
 {#if ['pending', 'start'].includes($game.status)}
