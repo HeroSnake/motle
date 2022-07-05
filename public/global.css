@@ -16,7 +16,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #232327 !important;
+    background-color: #272236 !important;
     user-select: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -77,12 +77,14 @@ button:focus {
 }
 
 .top-container {
-    background-color: #161618;
+    background-color: #171420;
     padding: 10px;
     display: flex;
     font-size: 1em;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
+    position: relative;
+    gap: 15px;
 }
 
 .top-container > span {
@@ -91,8 +93,14 @@ button:focus {
     align-items: center;
 }
 
+.logo {
+    position: absolute;
+    left: 0;
+    height: 100%;
+}
+
 .custom-modal {
-    background-color: #000000a6;
+    background-color: #00000059;
     height: 100vh;
     width: 100vw;
     position: absolute;
@@ -157,7 +165,7 @@ button:focus {
 
 .keyboard {
     padding: 10px;
-    background-color: #161618;
+    background-color: #171420;
     width: 100%;
     color: #666;
     text-transform: uppercase;
@@ -184,6 +192,12 @@ button:focus {
     text-transform: uppercase;
 }
 
+.help {
+    position: absolute;
+    right: 0;
+    margin: 10px;
+}
+
 .input-index, .help {
     transition: 0.2s all;
 }
@@ -206,7 +220,7 @@ button:focus {
 }
 
 .valid {
-    background-color: green;
+    background-color: #497d49;
 }
 
 .invalid {
@@ -218,7 +232,7 @@ button:focus {
 }
 
 .in-word {
-    background-color: orange;
+    background-color: #c4933a;
 }
 
 .fail {
@@ -229,17 +243,17 @@ button:focus {
 }
 
 .error {
-    background-color: red;
+    background-color: #bd4747;
 }
 
 .supp {
-    background-color: rgb(196, 56, 63);
+    background-color: #bd4747;
     grid-column-start: 9;
     grid-column-end: 11;
 }
 
 .enter {
-    background-color: rgb(49, 197, 69);
+    background-color: #497d49;
     grid-column-start: 1;
     grid-column-end: 3;
 }
@@ -249,7 +263,7 @@ button:focus {
 }
 
 .gif-container {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(26, 0, 30, 0.6);
     display: flex;
     align-items: center;
     justify-content: flex-start;
