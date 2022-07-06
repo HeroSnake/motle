@@ -284,6 +284,13 @@ function createGame()
         return game
 	})
 
+    const inputName = (e) => {
+        console.log(e.target.value)
+        userData.username = e.target.value
+		storeUserData(userData)
+        console.log(userData)
+    }
+
     return {
         subscribe,
         inputVal,
@@ -296,6 +303,7 @@ function createGame()
         checkAttempt,
         getScore,
         useClue,
+        inputName
     }
 
     // TODOS:

@@ -11,10 +11,7 @@
 
 	$: placeHolderNumber = Math.abs(config.maxTry - $game.attempts.length)
 
-	const inputName = (e) => {
-		$game.userData.username = e.target.value
-		store$game.userData($game.userData)
-	}
+	$: userName = $game.userData.username
 
 	const keyInput = event => {
 		let val = event.key.toUpperCase()
@@ -44,12 +41,12 @@
 	<div transition:slide class="custom-modal" on:click|self={() => displayModal = false}>
 	</div>
 	<div transition:slide class="custom-modal-content">
-		<Input class="text-center" autofocus on:input={inputName} bind:value={$game.userData.username}/>
+		<Input class="text-center" autofocus on:input={game.inputName} bind:value={userName}/>
 	</div>
 {/if}
 <div class="top-container">
 	<img class="logo" src="/logo.png" alt="logo">
-	<span on:click={() => displayModal = true} class="username"><Icon data={ user }/>&nbsp;{@html $game.userData.username}</span>
+	<span on:click={() => displayModal = true} class="username"><Icon data={ user }/>&nbsp;{@html userName}</span>
 	<span><Icon data={ star }/>&nbsp;{$game.userData.highScore}</span>
 	<span><Icon data={ clockO }/>&nbsp;{$game.userData.streak}</span>
 	<span class="help {$game.clues > 0 ? 'up' : 'down'}" on:click={game.useClue}>
