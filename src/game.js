@@ -10,6 +10,8 @@ function createGame()
     let userHistory = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
+    let modalName = false
+    let hitMarker = new Audio('./audio/hitMarker.mp3')
 
     // Helpers
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
@@ -67,7 +69,8 @@ function createGame()
         keyboard: initKeyboard(),
         clues: 1,
         userData: userData,
-        cluedIdx: userHistory.clues
+        cluedIdx: userHistory.clues,
+        modalName: modalName
     })
 
     // Adding ref game
@@ -123,7 +126,6 @@ function createGame()
 
         game.cluedIdx.map(i => {
             if (currentWord[i].value == '') {
-                console.log([...game.word])
                 game.attempts[game.attempts.length - 1][game.inputIndex].value = [...game.word][i]
             }
         })
@@ -173,6 +175,7 @@ function createGame()
             }
         })
 
+
         for (const [i, letter] of currentWord.entries()) {
             const keyboardKey = gameInstance.keyboard.find(k => k.value == letter.value)
             if (valids.includes(i)) {
@@ -199,11 +202,11 @@ function createGame()
         }
 
         gameInstance.inputIndex = 1
-        update(g => gameInstance)
+        await update(g => gameInstance)
 
         if (valids.length == gameInstance.word.length) {
             finishGame('success')
-        } else if (gameInstance.attempts.length - 1 == config.maxTry) {
+        } else if (gameInstance.attempts.length == config.maxTry) {
             finishGame('fail')
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
@@ -284,12 +287,23 @@ function createGame()
         return game
 	})
 
-    const inputName = (e) => {
-        console.log(e.target.value)
-        userData.username = e.target.value
-		storeUserData(userData)
-        console.log(userData)
-    }
+    const inputName = (e) => update(game => {
+        game.userData.username = e.target.value
+		storeUserData(game.userData)
+        return game
+    })
+
+    const changeTheme = () => update(game => {
+        let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.userData.theme) + 1) % config.themes.length]
+        game.userData.theme = newTheme.name
+        storeUserData(game.userData)
+        return game
+    })
+
+    const setModalName = (bool) => update(game => {
+        game.modalName = bool
+        return game
+    })
 
     return {
         subscribe,
@@ -303,13 +317,10 @@ function createGame()
         checkAttempt,
         getScore,
         useClue,
-        inputName
+        inputName,
+        changeTheme,
+        setModalName
     }
-
-    // TODOS:
-    //  - scoring hightscore + streak
-    //  -
-    //  -
 }
 
 export const game = createGame()

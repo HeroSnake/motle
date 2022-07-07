@@ -27,6 +27,12 @@ export const config = {
         { value: 'B', status: 'unchecked', score: 1 },
         { value: 'N', status: 'unchecked', score: 1 }
     ],
+    themes: [
+        { name: 'light', preview: '#ccc' },
+        { name: 'dark', preview: '#d700f999' },
+        // { name: 'neon', preview: '' }
+    ],
+    ranks: ['#FF5000', '#FF0000','#00FF00','#0000FF','#FFFF00','#00FFFF','#FF00FF'],
     clues: 1,
     maxTry: 6,
     minLength: 5,
@@ -41,7 +47,8 @@ export const config = {
         data: {
             username: 'No1', //no one
             highScore: 0,
-            streak: 0
+            streak: 0,
+            theme: 'dark'
         },
         history: {
             attempts: [],
