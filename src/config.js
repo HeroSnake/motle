@@ -38,6 +38,7 @@ export const config = {
     minLength: 5,
     maxLength: 8,
     revealDelay: 100,
+    godMode: 'tgm',
     transitions: {
         time: 100,
         duration: 200
@@ -48,7 +49,8 @@ export const config = {
             username: 'No1', //no one
             highScore: 0,
             streak: 0,
-            theme: 'dark'
+            theme: 'dark',
+            reroll: 1
         },
         history: {
             attempts: [],

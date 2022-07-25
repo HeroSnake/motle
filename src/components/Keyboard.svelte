@@ -28,7 +28,7 @@
 </script>
 
 <svelte:window on:keydown={keyInput}/>
-{#if ['pending', 'start'].includes($game.status)}
+{#if ['pending', 'start'].includes($game.status) && !$game.modalName}
     <div class="keyboard" transition:slide>
         <Col xs="12" lg="5" class="keyboard-container">
             {#each $game.keyboard as key, index}

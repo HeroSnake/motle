@@ -6,25 +6,31 @@ function createGame()
 {
     let gameInstance, currentLetter, currentWord, userString
     const gameStatus = ['start', 'success', 'fail', 'pending']
-    let userData = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
-    let userHistory = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
+    let user = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
+    let history = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
     let modalName = false
+    let godMode = user.username == config.godMode
     let hitMarker = new Audio('./audio/hitMarker.mp3')
 
     // Helpers
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
-    const storeUserData = userData => localStorage.setItem('data', JSON.stringify(userData))
-    const storeGame = history => localStorage.setItem('history', JSON.stringify(history))
+
+    const storeUser = user => localStorage.setItem('data', JSON.stringify(user))
+
+    const storeHistory = history => localStorage.setItem('history', JSON.stringify(history))
+
     const getNextAttempt = word => [...word].map((l, i) => ({ value: !i ? l : '', status: !i ? 'valid' :  'unchecked'}))
+
     const unique = (value, index, self) => self.indexOf(value) === index
+
     const initKeyboard = () => {
         let status = 'unchecked'
         const valids = []
         const invalids = []
         const inWord = []
-        userHistory.attempts.map(w => w.map(k => {
+        history.attempts.map(w => w.map(k => {
             if (k.status == 'in-word') {
                 inWord.push(k.value)
             } else if (k.status == 'invalid') {
@@ -46,15 +52,14 @@ function createGame()
         })
     }
 
-
     // INIT
-    if (userHistory.word == -1) {
+    if (history.word == -1) {
         const idx = Math.floor(Math.random() * wordsFiltered.length)
         word = wordsFiltered[idx]
-        userHistory.attempts = [getNextAttempt(word)]
-        userHistory.word = idx
+        history.attempts = [getNextAttempt(word)]
+        history.word = idx
     } else {
-        word = wordsFiltered[userHistory.word % wordsFiltered.length]
+        word = wordsFiltered[history.word % wordsFiltered.length]
         // TODO: reset du keyboard au chargement
     }
     // END INIT
@@ -64,47 +69,82 @@ function createGame()
         status: gameStatus[0],
         word: word,
         inputIndex: 1,
-        attempts: userHistory.attempts,
-        fundedLetters: userHistory.fundedLetters,
+        attempts: history.attempts,
+        fundedLetters: history.fundedLetters,
         keyboard: initKeyboard(),
         clues: 1,
-        userData: userData,
-        cluedIdx: userHistory.clues,
-        modalName: modalName
+        user: user,
+        history: history,
+        cluedIdx: history.clues,
+        modalName: modalName,
+        godMode: godMode
     })
 
     // Adding ref game
-    const sub = subscribe(g => {
-        gameInstance = g
-        currentWord = g.attempts[g.attempts.length - 1]
-        currentLetter = currentWord[g.inputIndex].value
+    const sub = subscribe(game => {
+        gameInstance = game
+        currentWord = game.attempts[game.attempts.length - 1]
+        currentLetter = currentWord[game.inputIndex].value
         userString = currentWord.map(l => l.value).join('')
-        userHistory.attempts = g.attempts
-        userHistory.clues = g.cluedIdx
-        userHistory.fundedLetters = g.fundedLetters
-        storeUserData(userData)
-        storeGame(userHistory)
+        history.attempts = game.attempts
+        history.clues = game.cluedIdx
+        history.fundedLetters = game.fundedLetters
+        storeUser(game.user)
+        storeHistory(game.history)
     })
 
-    const updateGameStatus = status => update(g => ({...g, status }))
+    const initGame = () => update(game => {
+        if (history.word == -1) {
+            const idx = Math.floor(Math.random() * wordsFiltered.length)
+            word = wordsFiltered[idx]
+            history.attempts = [getNextAttempt(word)]
+            history.word = idx
+        } else {
+            word = wordsFiltered[history.word % wordsFiltered.length]
+            // TODO: reset du keyboard au chargement
+        }
+        if (history.fundedLetters.length == word.length) {
+            game.status = 'success'
+        }
+        else if (game.attempts.length == config.maxTry) {
+            game.status = 'fail'
+        }
+        return game
+    })
+
+    const updateGameStatus = status => update(game => ({...game, status }))
+
+    const reset = () => update(game => {
+        if(game.godMode || game.user.reroll > 0) {
+            if(!game.godMode) {
+                game.user.reroll--
+            }
+            storeUser(game.user)
+            resetGame()
+        }
+        return game
+    })
 
     const resetGame = () => update(game => {
         const idx = Math.floor(Math.random() * wordsFiltered.length)
-
         game.status = gameStatus[0]
         game.attempts = [getNextAttempt(wordsFiltered[idx])]
         game.inputIndex = 1
         game.word = wordsFiltered[idx]
         game.fundedLetters = []
-        userHistory.word = idx
+        game.history.word = idx
         game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
         game.cluedIdx = []
-
+        storeHistory(user.history)
+        storeUser(game.user)
         return game
     })
 
     // L'ordre dans les condition est très important !!
     const updateLetter = letter => update(game => {
+        if(game.status == 'pending') {
+            return game
+        }
         letter = letter.toUpperCase()
 
         if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex))) {
@@ -115,9 +155,9 @@ function createGame()
             game.attempts[game.attempts.length - 1][game.inputIndex].value = letter
         }
 
-        // compute word funded letter
-        if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length && [...currentWord.map((l, i) => !i ? '' : l.value)].filter(l => l == '').length == currentWord.length) {
-            game.fundedLetters.map(i => game.attempts[game.attempts.length - 1][i].value = [...game.word][i])
+        // compute word founded letter
+        if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
+            game.attempts[game.attempts.length - 1].map((a, i) => a.value = game.fundedLetters.includes(i) ? [...game.word][i] : '')
         }
 
         if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
@@ -135,26 +175,25 @@ function createGame()
     const inputVal = l => updateLetter(l)
     const suppVal = () => updateLetter('')
 
-    const customInput = index => update(g => {
-        if (index > 0 && index < g.word.length) {
-            g.inputIndex = index
+    const customInput = index => update(game => {
+        if (index > 0 && index < game.word.length) {
+            game.inputIndex = index
         }
-        return g
+        return game
     })
 
     const goLeft = () => customInput(gameInstance.inputIndex - 1)
     const goRight = () => customInput(gameInstance.inputIndex + 1)
 
-    const updateLastAttempt = attempt => update(g => {
-        g.attempts.splice(g.attempts.length - 1, 1, attempt)
-        return g
+    const updateLastAttempt = attempt => update(game => {
+        game.attempts.splice(game.attempts.length - 1, 1, attempt)
+        return game
     })
 
     const checkAttempt = async () => {
         if (currentWord.findIndex(l => l.value == '') != -1 || gameInstance.status != 'start') {
             return
         }
-
         if (!wordsFiltered.includes(userString)) {
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
             await laPause(config.revealDelay)
@@ -188,7 +227,9 @@ function createGame()
                     keyboardKey.status = 'in-word'
                     unchecked.splice(idx, 1)
                 } else {
-                    keyboardKey.status = 'invalid'
+                    if(keyboardKey.status == 'initial') {
+                        keyboardKey.status = 'invalid'
+                    }
                     letter.status = 'invalid'
                 }
             }
@@ -213,24 +254,25 @@ function createGame()
             updateGameStatus('start')
             suppVal()
         }
-
-        storeUserData(userData)
+        storeUser(user)
+        storeHistory(history)
     }
 
     const finishGame = status => update(game => {
         game.status = status
-
         if (status == 'success') {
-            if(getScore() > userData.highScore) {
-                userData.highScore = getScore()
+            if(getScore() > game.user.highScore) {
+                game.user.highScore = getScore()
             }
-            userData.streak++
+            game.user.streak++
+            if(game.user.reroll < 1 && game.user.streak % 2 == 0) {
+                game.user.reroll++
+            }
         } else if (status == 'fail') {
-            userData.streak = 0
+            game.user.streak = 0
         }
-
-        storeGame({ word: -1, attempts: []})
-
+        storeUser(game.user)
+        storeHistory({ ...game.history, word: -1, attempts: []})
         // clear only store but not game yet
         return game
     })
@@ -288,15 +330,16 @@ function createGame()
 	})
 
     const inputName = (e) => update(game => {
-        game.userData.username = e.target.value
-		storeUserData(game.userData)
+        game.user.username = e.target.value
+        game.godMode = game.user.username == config.godMode
+		storeUser(game.user)
         return game
     })
 
     const changeTheme = () => update(game => {
-        let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.userData.theme) + 1) % config.themes.length]
-        game.userData.theme = newTheme.name
-        storeUserData(game.userData)
+        let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.user.theme) + 1) % config.themes.length]
+        game.user.theme = newTheme.name
+        storeUser(game.user)
         return game
     })
 
@@ -305,6 +348,19 @@ function createGame()
         return game
     })
 
+    const clearStorage = () => update(game => {
+        localStorage.clear()
+        game.user = config.defaultLocalStorage.data
+        if(game.godMode) {
+            game.user.username = config.godMode
+        }
+        storeUser(game.user)
+        storeHistory(game.history)
+        return game
+    })
+
+    initGame()
+
     return {
         subscribe,
         inputVal,
@@ -312,6 +368,7 @@ function createGame()
         customInput,
         goLeft,
         goRight,
+        reset,
         resetGame,
         getSharing,
         checkAttempt,
@@ -319,7 +376,8 @@ function createGame()
         useClue,
         inputName,
         changeTheme,
-        setModalName
+        setModalName,
+        clearStorage
     }
 }
 

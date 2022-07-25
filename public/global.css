@@ -192,12 +192,9 @@ button {
     margin: 10px;
 }
 
-.input-index, .help {
+.input-index
+.help {
     transition: 0.2s all;
-}
-
-.help.up, .username {
-    cursor: pointer;
 }
 
 .help.up:hover {
@@ -295,8 +292,32 @@ button {
 }
 
 .keyboard-letter:active,
-.keyboard-key:active {
+.keyboard-key:active,
+.clear,
+.reset,
+.help.up,
+.username {
     cursor: pointer;
+}
+
+.godmode {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-family: 'Academy engraved';
+}
+
+.reset:hover {
+	animation: rotate 0.5s linear;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
 }
 
 @media screen and (max-width: 641px) {
@@ -374,7 +395,8 @@ body .dark,
 }
 
 .dark .input-inde,
-.dark .help.up {
+.dark .help.up,
+.clear:hover {
     filter: drop-shadow(0 0 0.55rem #ccc);
 }
 
@@ -397,11 +419,6 @@ body .dark,
 
 .dark .close-def-btn:hover {
     background-color: #fff;
-}
-
-.dark iframe {
-    background-color: #000 !important;
-    color: #e6e6e6 !important;
 }
 
 .dark .keyboard-letter:active,
@@ -503,10 +520,6 @@ body .light,
 
 .light .close-def-btn:hover {
     background-color: #fff;
-}
-
-.light iframe {
-    color: #e6e6e6 !important;
 }
 
 .light .keyboard-letter:active,

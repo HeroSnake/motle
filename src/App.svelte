@@ -6,22 +6,22 @@
 	import Endgame from './components/Endgame.svelte'
 	import Plate from './components/Plate.svelte'
 	import Keyboard from './components/Keyboard.svelte'
+	import Godmode from './components/Godmode.svelte'
 </script>
 
 <Styles />
-<div class="plate {$game.userData.theme}">
+<div class="plate {$game.user.theme}">
 
 	<ModalName />
 
 	<Header />
 
+	<Godmode />
+
 	<Endgame />
 
 	<Plate />
 
-	{#if $game.userData.username == 'tgm'}
-		<h1>{$game.word}</h1>
-	{/if}
-
 	<Keyboard />
+
 </div>

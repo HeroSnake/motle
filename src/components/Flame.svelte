@@ -3,10 +3,10 @@
 	import { game } from '../game.js'
 
 	$: getColor = (i) => {
-		if ($game.userData.username == 'tgm' || $game.userData.streak >= 99) {
+		if ($game.godMode || $game.user.streak >= 99) {
 			return config.ranks[i % config.ranks.length]
 		} else {
-			return config.ranks[Math.min(Math.floor($game.userData.streak/5), config.ranks.length - 1)]
+			return config.ranks[Math.min(Math.floor($game.user.streak/5), config.ranks.length - 1)]
 		}
 	}
 

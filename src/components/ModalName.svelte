@@ -9,6 +9,6 @@
 {/if}
 {#if $game.modalName}
     <div class="custom-modal-content">
-        <Input class="text-center" autofocus on:input={game.inputName} bind:value={$game.userData.username}/>
+        <Input class="text-center" autofocus on:input={game.inputName} bind:value={$game.user.username}/>
     </div>
 {/if}
