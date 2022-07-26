@@ -227,7 +227,7 @@ function createGame()
                     keyboardKey.status = 'in-word'
                     unchecked.splice(idx, 1)
                 } else {
-                    if(keyboardKey.status == 'initial') {
+                    if(keyboardKey.status == 'unchecked') {
                         keyboardKey.status = 'invalid'
                     }
                     letter.status = 'invalid'
