@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store'
 import { words } from './words.js'
 import { config } from './config'
+import { playableWords } from './playableWords.js'
 
 function createGame()
 {
@@ -9,6 +10,7 @@ function createGame()
     let user = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
     let history = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
+    const playableWordsFiltered = Object.freeze([...playableWords.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
     let modalName = false
     let godMode = user.username == config.godMode
@@ -52,17 +54,19 @@ function createGame()
         })
     }
 
-    // INIT
-    if (history.word == -1) {
-        const idx = Math.floor(Math.random() * wordsFiltered.length)
-        word = wordsFiltered[idx]
-        history.attempts = [getNextAttempt(word)]
-        history.word = idx
-    } else {
-        word = wordsFiltered[history.word % wordsFiltered.length]
-        // TODO: reset du keyboard au chargement
+    function init() {
+        if (history.word == -1) {
+            const idx = Math.floor(Math.random() * playableWordsFiltered.length)
+            word = playableWordsFiltered[idx]
+            history.attempts = [getNextAttempt(word)]
+            history.word = idx
+        } else {
+            word = playableWordsFiltered[history.word % playableWordsFiltered.length]
+            // TODO: reset du keyboard au chargement
+        }
     }
-    // END INIT
+
+    init()
 
     // WRITABLE OBJECT
     const { subscribe, set, update } = writable({
@@ -94,15 +98,7 @@ function createGame()
     })
 
     const initGame = () => update(game => {
-        if (history.word == -1) {
-            const idx = Math.floor(Math.random() * wordsFiltered.length)
-            word = wordsFiltered[idx]
-            history.attempts = [getNextAttempt(word)]
-            history.word = idx
-        } else {
-            word = wordsFiltered[history.word % wordsFiltered.length]
-            // TODO: reset du keyboard au chargement
-        }
+        init()
         if (history.fundedLetters.length == word.length) {
             game.status = 'success'
         }
@@ -126,11 +122,11 @@ function createGame()
     })
 
     const resetGame = () => update(game => {
-        const idx = Math.floor(Math.random() * wordsFiltered.length)
+        const idx = Math.floor(Math.random() * playableWordsFiltered.length)
         game.status = gameStatus[0]
-        game.attempts = [getNextAttempt(wordsFiltered[idx])]
+        game.attempts = [getNextAttempt(playableWordsFiltered[idx])]
         game.inputIndex = 1
-        game.word = wordsFiltered[idx]
+        game.word = playableWordsFiltered[idx]
         game.fundedLetters = []
         game.history.word = idx
         game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
@@ -194,7 +190,9 @@ function createGame()
         if (currentWord.findIndex(l => l.value == '') != -1 || gameInstance.status != 'start') {
             return
         }
-        if (!wordsFiltered.includes(userString)) {
+
+        //ERREUR MOT INCONNU
+        if (!(wordsFiltered.includes(userString) || playableWordsFiltered.includes(userString))) {
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
             await laPause(config.revealDelay)
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: i == 0 ? 'valid' : 'unchecked' })))
