@@ -11,14 +11,27 @@
 			if (!$game.modalName) {
 				if ($game.keyboard.find(k => k.value == val)) {
 					game.inputVal(val)
-				} else if (val == 'BACKSPACE') {
-					game.suppVal()
-				} else if (val == 'ENTER') {
-					game.checkAttempt()
-				} else if (val == 'ARROWRIGHT') {
-					game.goRight()
-				} else if (val == 'ARROWLEFT') {
-					game.goLeft()
+				} else {
+					switch (val) {
+						case 'BACKSPACE':
+							game.suppVal()
+							break
+						case 'ENTER':
+							game.checkAttempt()
+							break
+						case 'ARROWRIGHT':
+							game.goRight()
+							break
+						case 'ARROWLEFT':
+							game.goLeft()
+							break
+						case 'HOME':
+							game.goHome()
+							break
+						case 'END':
+							game.goEnd()
+							break
+					}
 				}
 			} else if (val == 'ENTER') {
 				game.setModalName(false)

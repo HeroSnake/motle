@@ -32,7 +32,7 @@ function createGame()
         const valids = []
         const invalids = []
         const inWord = []
-        history.attempts.map(w => w.map(k => {
+        history.attempts.forEach(w => w.forEach(k => {
             if (k.status == 'in-word') {
                 inWord.push(k.value)
             } else if (k.status == 'invalid') {
@@ -153,16 +153,17 @@ function createGame()
 
         // compute word founded letter
         if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
-            game.attempts[game.attempts.length - 1].map((a, i) => a.value = game.fundedLetters.includes(i) ? [...game.word][i] : '')
+            game.attempts[game.attempts.length - 1].forEach((a, i) => a.value = game.fundedLetters.includes(i) ? [...game.word][i] : '')
         }
 
         if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
             game.inputIndex++
         }
 
-        game.cluedIdx.map(i => {
+        game.cluedIdx.forEach(i => {
+            game.attempts[game.attempts.length - 1][i].status  = 'clued'
             if (currentWord[i].value == '') {
-                game.attempts[game.attempts.length - 1][game.inputIndex].value = [...game.word][i]
+                game.attempts[game.attempts.length - 1][i].value = [...game.word][i]
             }
         })
         return game
@@ -180,6 +181,9 @@ function createGame()
 
     const goLeft = () => customInput(gameInstance.inputIndex - 1)
     const goRight = () => customInput(gameInstance.inputIndex + 1)
+
+    const goHome = () => customInput(1)
+    const goEnd = () => customInput(currentWord.length - 1)
 
     const updateLastAttempt = attempt => update(game => {
         game.attempts.splice(game.attempts.length - 1, 1, attempt)
@@ -204,7 +208,7 @@ function createGame()
         let unchecked = []
         let valids = []
 
-        currentWord.map((letter, i) => {
+        currentWord.forEach((letter, i) => {
             if (letter.value == arrayWord[i]) {
                 valids.push(i)
             } else {
@@ -318,7 +322,6 @@ function createGame()
 		navigator.clipboard.writeText(sharingString)
     }
 
-
 	const useClue = () => update(game => {
 		if(['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
 			currentWord[game.inputIndex] = { value: [...game.word][game.inputIndex], status: 'clued' }
@@ -366,6 +369,8 @@ function createGame()
         customInput,
         goLeft,
         goRight,
+        goHome,
+        goEnd,
         reset,
         resetGame,
         getSharing,
