@@ -1,7 +1,7 @@
 <script>
     import Icon from 'svelte-awesome'
 	import { lightbulbO, star, user, fire, refresh } from 'svelte-awesome/icons'
-	import Flame from './Flame.svelte'
+    import MainFlame from './Flames/MainFlame.svelte';
     import { game } from '../game'
     import { config } from '../config.js'
 
@@ -16,7 +16,7 @@
         {#if $game.user.streak == 0}
             <Icon data={ fire }/>
         {:else}
-            <Flame />
+            <MainFlame />
         {/if}
         &nbsp;{$game.user.streak}
     </span>

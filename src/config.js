@@ -32,7 +32,6 @@ export const config = {
         { name: 'dark', preview: '#d700f999' },
         // { name: 'neon', preview: '' }
     ],
-    ranks: ['#FF5000', '#FF0000','#00FF00','#0000FF','#FFFF00','#00FFFF','#FF00FF'],
     clues: 1,
     maxTry: 6,
     minLength: 5,

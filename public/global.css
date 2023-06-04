@@ -79,7 +79,7 @@ button {
 .logo {
     position: absolute;
     left: 10px;
-    top: 4px;
+    top: -5px;
     font-family: 'Academy engraved';
     font-size: 40px;
     cursor: pointer;

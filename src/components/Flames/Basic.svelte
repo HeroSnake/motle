@@ -1,29 +1,10 @@
-<script>
-	import { config } from '../config.js'
-	import { game } from '../game.js'
-
-	$: getColor = (i) => {
-		if ($game.godMode || $game.user.streak >= 99) {
-			return config.ranks[i % config.ranks.length]
-		} else {
-			return config.ranks[Math.min(Math.floor($game.user.streak/5), config.ranks.length - 1)]
-		}
-	}
-
-</script>
-
 <div class="fire">
 	{#each Array(50) as _, i}
-		<div class="particle" style="background-image: radial-gradient({i % 4 == 0 ? '#ff5000' : getColor(i) } 20%, #fff0 70%);" />
+		<div class="particle" />
 	{/each}
 </div>
 
 <style>
-	body {
-		background-color: #300808;
-		margin: 0;
-	}
-
 	.fire {
 		font-size: 3px;
 		filter: blur(0.02em);
