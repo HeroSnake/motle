@@ -1,6 +1,6 @@
 <div class="flameholder">
 	<div class="glow"></div>
-	<div class="flame"></div>
+	<div class="flamette"></div>
 </div>
 
 <style>
@@ -8,7 +8,7 @@
 		position: relative;
 	}
 
-	.flame {
+	.flamette {
 		animation: burnBabyBurn 0.4s linear infinite;
 		height: 1px;
 		transform: translate(0, -15px);
@@ -24,7 +24,7 @@
 		width: 30px;
 	}
 
-	.flame,
+	.flamette,
 	.glow {
 		bottom: 0;
 		left: -17px;
