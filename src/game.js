@@ -23,7 +23,12 @@ function createGame()
 
     const storeHistory = history => localStorage.setItem('history', JSON.stringify(history))
 
-    const getNextAttempt = word => [...word].map((l, i) => ({ value: !i ? l : '', status: !i ? 'valid' :  'unchecked'}))
+    const getNextAttempt = word => [...word].map((l, i) => ({
+        value: !i ? l : '',
+        status: !i ? 'valid' : 'unchecked',
+        newStatus: !i ? 'valid' : 'unchecked',
+        showAttemp: false
+    }))
 
     const unique = (value, index, self) => self.indexOf(value) === index
 
@@ -160,12 +165,8 @@ function createGame()
             game.inputIndex++
         }
 
-        game.cluedIdx.forEach(i => {
-            game.attempts[game.attempts.length - 1][i].status  = 'clued'
-            if (currentWord[i].value == '') {
-                game.attempts[game.attempts.length - 1][i].value = [...game.word][i]
-            }
-        })
+        updateClueLetter()
+
         return game
     })
 
@@ -198,8 +199,9 @@ function createGame()
         //ERREUR MOT INCONNU
         if (!(wordsFiltered.includes(userString) || playableWordsFiltered.includes(userString))) {
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
-            await laPause(config.revealDelay)
+            await laPause(config.errorDelay)
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: i == 0 ? 'valid' : 'unchecked' })))
+            updateClueLetter()
             return
         }
 
@@ -220,24 +222,27 @@ function createGame()
         for (const [i, letter] of currentWord.entries()) {
             const keyboardKey = gameInstance.keyboard.find(k => k.value == letter.value)
             if (valids.includes(i)) {
-                letter.status = 'valid'
+                letter.newStatus = 'valid'
                 keyboardKey.status = 'valid'
             } else {
                 const idx = unchecked.indexOf(letter.value)
                 if (idx != -1) {
-                    letter.status = 'in-word'
+                    letter.newStatus = 'in-word'
                     keyboardKey.status = 'in-word'
                     unchecked.splice(idx, 1)
                 } else {
                     if(keyboardKey.status == 'unchecked') {
                         keyboardKey.status = 'invalid'
                     }
-                    letter.status = 'invalid'
+                    letter.newStatus = 'invalid'
                 }
             }
 
+            letter.showAttemp = true
             updateLastAttempt(currentWord)
             await laPause(config.revealDelay)
+            letter.status = letter.newStatus
+            letter.showAttemp = false
         }
 
         if (valids.length) {
@@ -245,7 +250,7 @@ function createGame()
         }
 
         gameInstance.inputIndex = 1
-        await update(g => gameInstance)
+        update(g => gameInstance)
 
         if (valids.length == gameInstance.word.length) {
             finishGame('success')
@@ -329,6 +334,16 @@ function createGame()
 		}
         return game
 	})
+
+    const updateClueLetter = () => update(game => {
+        game.cluedIdx.forEach(i => {
+            game.attempts[game.attempts.length - 1][i].status = 'clued'
+            if (currentWord[i].value == '') {
+                game.attempts[game.attempts.length - 1][i].value = [...game.word][i]
+            }
+        })
+        return game
+    })
 
     const inputName = (e) => update(game => {
         game.user.username = e.target.value

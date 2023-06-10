@@ -31,7 +31,7 @@
         width: 0%;
         height: 0%;
         background-color: #ffdc01;
-        border-radius: 1vw;
+        border-radius: 4px;
     }
     .fire .flames .flame:nth-child(2n + 1) {
         -webkit-animation: flameodd 1.5s ease-in infinite;

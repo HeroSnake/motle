@@ -79,7 +79,6 @@ button {
 .logo {
     position: absolute;
     left: 10px;
-    top: -5px;
     font-family: 'Academy engraved';
     font-size: 40px;
     cursor: pointer;
@@ -141,17 +140,7 @@ button {
     align-items: center;
     font-size: xx-large;
     text-transform: uppercase;
-    height: 50px;
-    width: 50px;
     border-radius: 5px;
-}
-
-.word-block input {
-    background: transparent;
-    border: none;
-    width: 100%;
-    text-transform: uppercase;
-    text-align: center;
 }
 
 .keyboard-container {
@@ -205,10 +194,6 @@ button {
     opacity: 0.6;
 }
 
-.invalid {
-    opacity: 0.5;
-}
-
 .fail {
     display: flex;
     justify-content: center;
@@ -257,6 +242,10 @@ button {
 
 .valid {
     background-color: #497d49 !important;
+}
+
+.invalid {
+    background-color: #46444e !important;
 }
 
 .clued {
