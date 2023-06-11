@@ -60,14 +60,25 @@ button {
 }
 
 .top-container {
-    padding: 10px;
     display: flex;
     font-size: 1em;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 15px;
     position: sticky;
     top: 0;
+}
+
+.mid-container {
+    display: flex;
+}
+
+.mid-container > span {
+    margin-left: .6em;
+    margin-right: .6em;
+    display: flex;
+    align-items: center;
+    justify-items: center;
 }
 
 .top-container > span {
@@ -77,11 +88,10 @@ button {
 }
 
 .logo {
-    position: absolute;
-    left: 10px;
     font-family: 'Academy engraved';
     font-size: 40px;
     cursor: pointer;
+    margin-left: .3em;
 }
 
 .custom-modal {
@@ -176,9 +186,7 @@ button {
 }
 
 .help {
-    position: absolute;
-    right: 0;
-    margin: 10px;
+    margin-right: 1em;
 }
 
 .input-index

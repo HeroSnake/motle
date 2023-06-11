@@ -115,6 +115,12 @@ function createGame()
 
     const updateGameStatus = status => update(game => ({...game, status }))
 
+    const changeFlame = flame => update(game => {
+        game.user.selectedFlame = flame
+
+        return game
+    })
+
     const reset = () => update(game => {
         if(game.godMode || game.user.reroll > 0) {
             if(!game.godMode) {

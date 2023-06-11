@@ -6,12 +6,14 @@
 <style>
 	.flameholder {
 		position: relative;
+		font-size: 3px;
+		width: 10em;
+		height: 10em;
 	}
 
 	.flamette {
 		animation: burnBabyBurn 0.4s linear infinite;
 		height: 1px;
-		transform: translate(0, -15px);
 		width: 1px;
 	}
 
@@ -19,19 +21,16 @@
 		background-color: #ffb778;
 		border-radius: 50%;
 		filter: blur(15px);
-		height: 30px;
 		opacity: 0.6;
-		width: 30px;
 	}
 
 	.flamette,
 	.glow {
-		bottom: 0;
-		left: -17px;
-		margin: auto;
-		pointer-events: none;
 		position: absolute;
 		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 
 	@keyframes burnBabyBurn {

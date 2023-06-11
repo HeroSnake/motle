@@ -9,12 +9,11 @@
 
 <style>
     .fire {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-60%, -25%);
-        height: 25px;
-        width: 25px;
+        position: relative;
+        height: 10em;
+        width: 10em;
+        font-size: 3px;
+        transform: translate(0, 2em);
     }
     .fire .flames {
         position: absolute;

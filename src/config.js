@@ -50,7 +50,8 @@ export const config = {
             highScore: 0,
             streak: 0,
             theme: 'dark',
-            reroll: 1
+            reroll: 1,
+            selectedFlame: false,
         },
         history: {
             attempts: [],
