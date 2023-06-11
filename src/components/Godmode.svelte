@@ -7,13 +7,11 @@
     let cleared = false
 
     const clearStorage = () => {
-        if(!cleared) {
+        if (!cleared) {
             cleared = true
             game.clearStorage()
             game.resetGame()
-            setTimeout(() => {
-                cleared = false
-            }, 1500)
+            setTimeout(() => {cleared = false}, 1500)
         }
     }
 </script>

@@ -5,23 +5,42 @@ import { playableWords } from './playableWords.js'
 
 function createGame()
 {
+    // Helpers
+    const laPause = t => new Promise(resolve => setTimeout(resolve, t))
+
+    const saveToLocalStorage = (key, value) => {console.log('coucou');localStorage.setItem(key, JSON.stringify(value))}
+    const storeUser = user => saveToLocalStorage('data', user)
+    const storeHistory = history => saveToLocalStorage('history', history)
+
+    const initConfig = (key, defaultLocalStorage) => {
+        let userLocalStorage = null
+        try {
+            userLocalStorage = JSON.parse(localStorage.getItem(key))
+        } catch {}
+
+        if (!userLocalStorage) {
+            return defaultLocalStorage
+        }
+
+        for (const key in defaultLocalStorage) {
+            if (!Object.hasOwnProperty.call(userLocalStorage, key)) {
+                userLocalStorage[key] = defaultLocalStorage[key];
+            }
+        }
+
+        return userLocalStorage
+    }
+
     let gameInstance, currentLetter, currentWord, userString
     const gameStatus = ['start', 'success', 'fail', 'pending']
-    let user = JSON.parse(localStorage.getItem('data')) ?? {...config.defaultLocalStorage.data}
-    let history = JSON.parse(localStorage.getItem('history')) ?? {...config.defaultLocalStorage.history}
+    let user = initConfig('data', {...config.defaultLocalStorage.data})
+    let history = initConfig('history', {...config.defaultLocalStorage.history})
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     const playableWordsFiltered = Object.freeze([...playableWords.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
     let modalName = false
     let godMode = user.username == config.godMode
     let hitMarker = new Audio('./audio/hitMarker.mp3')
-
-    // Helpers
-    const laPause = t => new Promise(resolve => setTimeout(resolve, t))
-
-    const storeUser = user => localStorage.setItem('data', JSON.stringify(user))
-
-    const storeHistory = history => localStorage.setItem('history', JSON.stringify(history))
 
     const getNextAttempt = word => [...word].map((l, i) => ({
         value: !i ? l : '',
@@ -67,7 +86,9 @@ function createGame()
             history.word = idx
         } else {
             word = playableWordsFiltered[history.word % playableWordsFiltered.length]
-            // TODO: reset du keyboard au chargement
+            if (!history.attempts.length) {
+                history.attempts = [getNextAttempt(word)]
+            }
         }
     }
 
@@ -126,7 +147,6 @@ function createGame()
             if(!game.godMode) {
                 game.user.reroll--
             }
-            storeUser(game.user)
             resetGame()
         }
         return game
@@ -142,8 +162,6 @@ function createGame()
         game.history.word = idx
         game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
         game.cluedIdx = []
-        storeHistory(user.history)
-        storeUser(game.user)
         return game
     })
 
@@ -267,8 +285,6 @@ function createGame()
             updateGameStatus('start')
             suppVal()
         }
-        storeUser(user)
-        storeHistory(history)
     }
 
     const finishGame = status => update(game => {
@@ -284,9 +300,6 @@ function createGame()
         } else if (status == 'fail') {
             game.user.streak = 0
         }
-        storeUser(game.user)
-        storeHistory({ ...game.history, word: -1, attempts: []})
-        // clear only store but not game yet
         return game
     })
 
@@ -354,14 +367,12 @@ function createGame()
     const inputName = (e) => update(game => {
         game.user.username = e.target.value
         game.godMode = game.user.username == config.godMode
-		storeUser(game.user)
         return game
     })
 
     const changeTheme = () => update(game => {
         let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.user.theme) + 1) % config.themes.length]
         game.user.theme = newTheme.name
-        storeUser(game.user)
         return game
     })
 
@@ -371,13 +382,10 @@ function createGame()
     })
 
     const clearStorage = () => update(game => {
-        localStorage.clear()
         game.user = config.defaultLocalStorage.data
         if(game.godMode) {
             game.user.username = config.godMode
         }
-        storeUser(game.user)
-        storeHistory(game.history)
         return game
     })
 
@@ -401,7 +409,8 @@ function createGame()
         inputName,
         changeTheme,
         setModalName,
-        clearStorage
+        clearStorage,
+        changeFlame,
     }
 }
 
