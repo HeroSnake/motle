@@ -8,7 +8,7 @@ function createGame()
     // Helpers
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
 
-    const saveToLocalStorage = (key, value) => {console.log('coucou');localStorage.setItem(key, JSON.stringify(value))}
+    const saveToLocalStorage = (key, value) => {localStorage.setItem(key, JSON.stringify(value))}
     const storeUser = user => saveToLocalStorage('data', user)
     const storeHistory = history => saveToLocalStorage('history', history)
 

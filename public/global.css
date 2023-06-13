@@ -4,8 +4,8 @@
 }
 
 @font-face {
-    font-family: 'Academy engraved';
-    src: url('../fonts/AcademyEngravedLetPlain.ttf');
+    font-family: 'Playfair';
+    src: url('../fonts/Playfair_144pt-Light.ttf');
 }
 
 html,
@@ -67,6 +67,7 @@ button {
     gap: 15px;
     position: sticky;
     top: 0;
+    z-index: 2;
 }
 
 .mid-container {
@@ -88,7 +89,7 @@ button {
 }
 
 .logo {
-    font-family: 'Academy engraved';
+    font-family: 'Playfair';
     font-size: 40px;
     cursor: pointer;
     margin-left: .3em;
@@ -301,7 +302,7 @@ button {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    font-family: 'Academy engraved';
+    font-family: 'Playfair';
 }
 
 .reset:hover {
