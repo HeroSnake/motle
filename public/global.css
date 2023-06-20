@@ -52,7 +52,7 @@ textarea {
     padding: 0.4em;
     margin: 0 0 0.5em 0;
     box-sizing: border-box;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 button {
@@ -72,14 +72,16 @@ button {
 
 .mid-container {
     display: flex;
+    gap: 20px;
 }
 
 .mid-container > span {
-    margin-left: .6em;
-    margin-right: .6em;
     display: flex;
     align-items: center;
-    justify-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    text-align: center;
+    font-size: 0.8em;
 }
 
 .top-container > span {
@@ -151,7 +153,7 @@ button {
     align-items: center;
     font-size: xx-large;
     text-transform: uppercase;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .keyboard-container {
@@ -179,7 +181,7 @@ button {
 .keyboard-key {
     padding: 14px 20px;
     font-size: 2em;
-    border-radius: 7px;
+    border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -281,7 +283,7 @@ button {
     background: transparent;
     font-size: 1em;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 3px;
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -475,8 +477,9 @@ body .light,
 
 .light .top-container,
 .light .themes,
+.light .flame-selector,
 .light .keyboard {
-    background-color: rgb(146, 146, 146);
+    background-color: rgb(146, 146, 146) !important;
 }
 
 .light .custom-modal {

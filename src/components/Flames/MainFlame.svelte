@@ -43,7 +43,7 @@
         <div class="flame-selector" transition:slide>
             {#each Object.entries(flames).reverse() as [name, flame]}
                 {#if $game.user.streak >= flame.threshold}
-                    <span on:click={() => game.changeFlame(name)} class="flame-option {flame.name == $game.user.selectedFlame ? 'selected' : ''}" transition:blur>
+                    <span on:click={() => game.changeFlame(name)} class="flame-option {flame.name == $game.user.selectedFlame ? 'selected' : ''}" transition:blur style="filter: hue-rotate({angle}deg);">
                         <svelte:component this={flame.component}/>
                     </span>
                 {/if}
@@ -71,7 +71,7 @@
         align-items: center;
         justify-content: center;
         gap: .5em;
-        top: 45px;
+        top: 57px;
     }
     .flame-option {
         opacity: 0.7;
