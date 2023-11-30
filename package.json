@@ -21,5 +21,8 @@
     "sirv-cli": "^2.0.0",
     "svelte-awesome": "^2.4.6",
     "sveltestrap": "^5.9.0"
+  },
+  "engines" : {
+    "node" : ">=20.0.0"
   }
 }
