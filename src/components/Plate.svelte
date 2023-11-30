@@ -4,6 +4,7 @@
     import { config } from "../config.js"
     import Letter from "./Letter.svelte"
     import Endgame from './Endgame.svelte'
+    import Godmode from './Godmode.svelte'
 
     $: placeHolderNumber = Math.abs(config.maxTry - $game.attempts.length);
 </script>
@@ -30,4 +31,5 @@
             </div>
         {/each}
     {/if}
+    <Godmode />
 </Col>

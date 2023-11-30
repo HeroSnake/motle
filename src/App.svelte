@@ -5,7 +5,6 @@
 	import Header from './components/Header.svelte'
 	import Plate from './components/Plate.svelte'
 	import Keyboard from './components/Keyboard.svelte'
-	import Godmode from './components/Godmode.svelte'
 </script>
 
 <Styles />
@@ -14,8 +13,6 @@
 	<ModalName />
 
 	<Header />
-
-	<Godmode />
 
 	<Plate />
 
