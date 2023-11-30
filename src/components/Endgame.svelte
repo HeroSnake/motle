@@ -6,12 +6,16 @@
     import Wiki from './Wiki.svelte'
 
     let wiki = false
+
+    const toggleWiki = () => {
+        wiki = !wiki
+    }
 </script>
 
 {#if !['pending', 'start'].includes($game.status)}
-    <div class="gif-container {$game.status}" transition:slide>
+    <div class="end-game-container {$game.status}" transition:slide>
         <img src="/img/{$game.status}.gif" alt="{$game.status}">
-        <span class="answer" on:click={() => wiki = !wiki}>{$game.word}</span>
+        <span class="answer" on:click={toggleWiki} on:keydown={toggleWiki}>{$game.word}</span>
 
         {#if wiki}
             <Wiki />

@@ -1,13 +1,15 @@
 <script>
-    import { Col } from "sveltestrap";
-    import { game } from "../game.js";
-    import { config } from "../config.js";
-    import Letter from "./Letter.svelte";
+    import { Col } from "sveltestrap"
+    import { game } from "../game.js"
+    import { config } from "../config.js"
+    import Letter from "./Letter.svelte"
+    import Endgame from './Endgame.svelte'
 
     $: placeHolderNumber = Math.abs(config.maxTry - $game.attempts.length);
 </script>
 
-<Col xs="12" lg="8" class="main-container">
+<Col xs="12" lg="8" class="page">
+    <Endgame />
     {#each $game.attempts as entry, iw}
         <div class="words-container">
             {#each entry as letter, il}

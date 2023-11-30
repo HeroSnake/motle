@@ -10,7 +10,7 @@
     $: username = $game.user.username.length ? $game.user.username : ' - '
 </script>
 
-<div class="top-container">
+<div class="header">
     <span class="logo" style="color:{theme};" on:click={game.changeTheme}>M</span>
     <div class="mid-container">
         <span on:click={() => game.setModalName(true)} class="username">

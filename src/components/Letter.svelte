@@ -8,7 +8,7 @@
     export let isInputIndex = false;
 </script>
 
-<div on:click class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
+<div on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
     <div class="flip-card-inner">
         <div class="word-block flip-card-front {letter.status}">
             {letter.value}
@@ -36,7 +36,7 @@
     }
 
     .show-attemp .flip-card-inner {
-        transition: transform 0.8s;
+        transition: transform 0.6s;
     }
 
     /* Do an horizontal flip when you move the mouse over the flip box container */

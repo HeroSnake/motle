@@ -27,10 +27,6 @@ body {
     -ms-user-select: none;
 }
 
-.plate {
-    height: inherit;
-}
-
 a {
     text-decoration: none;
 }
@@ -59,7 +55,7 @@ button {
     outline: none;
 }
 
-.top-container {
+.header {
     display: flex;
     font-size: 1em;
     justify-content: space-between;
@@ -67,6 +63,7 @@ button {
     gap: 15px;
     position: sticky;
     top: 0;
+    height: 10%;
     z-index: 2;
 }
 
@@ -84,7 +81,7 @@ button {
     font-size: 0.8em;
 }
 
-.top-container > span {
+.header > span {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -112,11 +109,12 @@ button {
     transform: translate(-50%, -50%);
 }
 
-.main-container {
+.page {
     padding: 10px;
     margin: auto;
     text-align: center;
-    min-height: 50vh;
+    height: 90%;
+    overflow-y: scroll;
 }
 
 .words-container {
@@ -225,15 +223,15 @@ button {
     opacity: 0.2;
 }
 
-.gif-container {
+.end-game-container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;
-    height: 100vh;
+    padding-bottom: 25px;
 }
 
-.gif-container img {
+.end-game-container img {
     height: 220px;
     width: auto;
 }
@@ -330,10 +328,10 @@ button {
 
 /* -------------- DARK -------------- */
 
-html,
-body .dark,
-.dark .main-container {
+html, body .dark, .dark .page {
     color: #fff !important;
+}
+html, body .dark:not(.end-game), .dark:not(.end-game) .page {
     background-color: #272236 !important;
 }
 
@@ -373,7 +371,7 @@ body .dark,
     border-color: #666;
 }
 
-.dark .top-container,
+.dark .header,
 .dark .themes,
 .dark .keyboard {
     background-color: #171420;
@@ -408,7 +406,7 @@ body .dark,
     background: #000;
 }
 
-.dark .gif-container {
+.dark.end-game {
     background-color: #25032b;
 }
 
@@ -426,15 +424,15 @@ body .dark,
     background-color: #333;
 }
 
-.dark .input-index,
+.dark:not(.end-game) .input-index,
 .dark .help.up {
     filter: drop-shadow(0 0 0.55rem #ccc);
 }
 /* -------------- LIGHT -------------- */
 
 html,
-body .light,
-.light .main-container {
+body .light:not(.end-game),
+.light:not(.end-game) .page {
     color: #222 !important;
     background-color: #ccc !important;
 }
@@ -475,7 +473,7 @@ body .light,
     border-color: #666;
 }
 
-.light .top-container,
+.light .header,
 .light .themes,
 .light .flame-selector,
 .light .keyboard {
@@ -510,7 +508,7 @@ body .light,
     background: #000;
 }
 
-.light .gif-container {
+.light.end-game {
     background-color: #c5c5c5;
 }
 
@@ -528,7 +526,7 @@ body .light,
     background-color: #333;
 }
 
-.light .input-index,
+.light:not(.end-game) .input-index,
 .light .help.up {
     filter: drop-shadow(0 0 0.55rem rgba(34, 34, 34, 0.565));
 }

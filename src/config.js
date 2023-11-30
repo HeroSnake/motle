@@ -36,7 +36,7 @@ export const config = {
     maxTry: 6,
     minLength: 5,
     maxLength: 8,
-    revealDelay: 400,
+    revealDelay: 250,
     errorDelay: 100,
     godMode: 'tgm',
     transitions: {
