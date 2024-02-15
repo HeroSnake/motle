@@ -182,7 +182,16 @@ function createGame()
 
         // compute word founded letter
         if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
-            game.attempts[game.attempts.length - 1].forEach((a, i) => a.value = game.fundedLetters.includes(i) ? [...game.word][i] : '')
+            let increaseCursor = true
+            game.attempts[game.attempts.length - 1].forEach((a, i) => {
+                a.value = ''
+                if (game.fundedLetters.includes(i)) {
+                    a.value = [...game.word][i]
+                    increaseCursor && (gameInstance.inputIndex = i + 1)
+                } else {
+                    increaseCursor = false
+                }
+            })
         }
 
         if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
@@ -293,7 +302,7 @@ function createGame()
             if(getScore() > game.user.highScore) {
                 game.user.highScore = getScore()
             }
-            game.user.streak++
+            game.user.streak += Math.floor(Math.log2(getScore() / 100))
             if(game.user.reroll < 1 && game.user.streak % 2 == 0) {
                 game.user.reroll++
             }
