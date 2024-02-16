@@ -26,7 +26,7 @@
         {#each Array(placeHolderNumber) as __}
             <div class="words-container">
                 {#each [...$game.word] as _}
-                    <Letter />
+                    <Letter filter={`background-color: hsl(0, 0%, ${Math.floor(Math.random() * 27) + 30}%);`} />
                 {/each}
             </div>
         {/each}

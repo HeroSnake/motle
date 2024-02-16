@@ -6,9 +6,11 @@
         newStatus: ''
     };
     export let isInputIndex = false;
+
+    export let filter = ''
 </script>
 
-<div on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
+<div style={filter} on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
     <div class="flip-card-inner">
         <div class="word-block flip-card-front {letter.status}">
             {letter.value}
