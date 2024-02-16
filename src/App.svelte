@@ -8,7 +8,7 @@
 </script>
 
 <Styles />
-<div class="{$game.user.theme} {!['pending', 'start'].includes($game.status) ? 'end-game' : ''}" style="height:100dvh;">
+<div class="{$game.user.theme} {!['pending', 'start'].includes($game.status) ? 'end-game' : ''}" style="height:100svh;">
 
 	<ModalName />
 
