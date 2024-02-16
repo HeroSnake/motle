@@ -10,12 +10,12 @@
     export let filter = ''
 </script>
 
-<div style={filter} on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
+<div on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
     <div class="flip-card-inner">
-        <div class="word-block flip-card-front {letter.status}">
+        <div class="word-block flip-card-front {letter.status}" style={filter}>
             {letter.value}
         </div>
-        <div class="word-block flip-card-back {letter.newStatus}">
+        <div class="word-block flip-card-back {letter.newStatus}" style={filter}>
             {letter.value}
         </div>
     </div>
