@@ -165,7 +165,7 @@ button {
     padding: 10px;
     width: 100%;
     text-transform: uppercase;
-    position: fixed;
+    position: absolute;
     bottom: 0;
     height: max-content;
 }
