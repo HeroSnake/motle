@@ -61,10 +61,7 @@ button {
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    position: sticky;
-    top: 0;
     height: 10vh;
-    z-index: 2;
 }
 
 .mid-container {
