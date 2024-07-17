@@ -72,6 +72,7 @@
         justify-content: center;
         gap: .5em;
         top: 57px;
+        z-index: 1;
     }
     .flame-option {
         opacity: 0.7;
