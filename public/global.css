@@ -61,7 +61,7 @@ button {
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    height: 10vh;
+    height: 10dvh;
 }
 
 .mid-container {
@@ -92,7 +92,7 @@ button {
 }
 
 .custom-modal {
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     position: absolute;
     z-index: 3;
@@ -110,7 +110,7 @@ button {
     padding: 0 10px;
     margin: auto;
     text-align: center;
-    height: 90vh;
+    height: 90dvh;
     overflow-y: scroll;
 }
 
