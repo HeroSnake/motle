@@ -18,6 +18,7 @@
                     {letter}
                     isInputIndex={$game.attempts.length - 1 == iw && $game.inputIndex == il}
                     on:click={() => $game.attempts.length - 1 == iw && game.customInput(il)}
+                    on:dblclick={() => $game.attempts.length - 1 == iw && game.toggleLockLetter(il)}
                 />
             {/each}
         </div>

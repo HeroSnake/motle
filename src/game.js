@@ -46,7 +46,8 @@ function createGame()
         value: !i ? l : '',
         status: !i ? 'valid' : 'unchecked',
         newStatus: !i ? 'valid' : 'unchecked',
-        showAttemp: false
+        showAttemp: false,
+        locked: false,
     }))
 
     const unique = (value, index, self) => self.indexOf(value) === index
@@ -209,6 +210,13 @@ function createGame()
     const customInput = index => update(game => {
         if (index > 0 && index < game.word.length) {
             game.inputIndex = index
+        }
+        return game
+    })
+
+    const toggleLockLetter = index => update(game => {
+        if (index > 0 && index < game.word.length) {
+            currentWord[index].locked = !currentWord[index].locked
         }
         return game
     })
@@ -420,6 +428,7 @@ function createGame()
         setModalName,
         clearStorage,
         changeFlame,
+        toggleLockLetter,
     }
 }
 

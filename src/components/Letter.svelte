@@ -3,14 +3,25 @@
         showAttemp: false,
         status: 'back',
         value: '',
-        newStatus: ''
+        newStatus: '',
+        locked: false,
     };
     export let isInputIndex = false;
 
     export let filter = ''
+
+    $: effect = () => {
+        const res = []
+
+        letter.showAttemp && res.push('show-attemp')
+        isInputIndex && res.push('input-index')
+        letter.locked && res.push('locked')
+
+        return res.join(' ')
+    }
 </script>
 
-<div on:click on:keydown class="flip-card {letter.showAttemp ? 'show-attemp' : ''} { isInputIndex ? 'input-index' : ''}">
+<div on:click on:dblclick on:keydown class="flip-card {effect()}">
     <div class="flip-card-inner">
         <div class="word-block flip-card-front {letter.status}" style={filter}>
             {letter.value}
