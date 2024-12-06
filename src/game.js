@@ -166,19 +166,20 @@ function createGame()
         return game
     })
 
-    // L'ordre dans les condition est très important !!
+    // L'ordre dans les conditions est très important !!
     const updateLetter = letter => update(game => {
         if(game.status == 'pending') {
             return game
         }
         letter = letter.toUpperCase()
 
-        if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex))) {
+        if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
             game.inputIndex--
         }
 
-        if (game.inputIndex != 1 || [...game.word].shift() != letter) {
-            game.attempts[game.attempts.length - 1][game.inputIndex].value = letter
+        // Prevent writing same letter ad the first in second position and locked words
+        if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
+            currentWord[game.inputIndex].value = letter
         }
 
         // compute word founded letter
@@ -215,7 +216,7 @@ function createGame()
     })
 
     const toggleLockLetter = index => update(game => {
-        if (index > 0 && index < game.word.length) {
+        if (index > 0 && index < game.word.length && currentWord[index].value != '') {
             currentWord[index].locked = !currentWord[index].locked
         }
         return game

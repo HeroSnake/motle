@@ -252,6 +252,7 @@ button {
 
 .invalid {
     background-color: #46444e !important;
+    opacity: 0.5;
 }
 
 .clued {
@@ -424,6 +425,9 @@ html, body .dark:not(.end-game), .dark:not(.end-game) .page {
 .dark:not(.end-game) .input-index,
 .dark .help.up {
     filter: drop-shadow(0 0 0.55rem #ccc);
+}
+.dark:not(.end-game) .locked .word-block  {
+    box-shadow: 0 0 15px red inset;
 }
 /* -------------- LIGHT -------------- */
 
