@@ -165,19 +165,19 @@ function createGame()
 
         if (letter == '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
             updateFoundedLetters()
-        }
+        } else {
+          if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
+              game.inputIndex--
+          }
 
-        if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
-            game.inputIndex--
-        }
+          // Prevent writing same letter ad the first in second position and locked words
+          if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
+              currentWord[game.inputIndex].value = letter
+          }
 
-        // Prevent writing same letter ad the first in second position and locked words
-        if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
-            currentWord[game.inputIndex].value = letter
-        }
-
-        if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
-            game.inputIndex++
+          if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
+              game.inputIndex++
+          }
         }
 
         updateClueLetter()
