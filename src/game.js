@@ -163,12 +163,12 @@ function createGame()
         }
         letter = letter.toUpperCase()
 
-        if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
-            game.inputIndex--
-        }
-
         if (letter == '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
             updateFoundedLetters()
+        }
+
+        if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
+            game.inputIndex--
         }
 
         // Prevent writing same letter ad the first in second position and locked words
