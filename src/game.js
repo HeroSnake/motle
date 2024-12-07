@@ -191,7 +191,7 @@ function createGame()
     const updateFoundedLetters = () => update(game => {
       let increaseCursor = true
       game.attempts[game.attempts.length - 1].forEach((a, i) => {
-          a.value = ''
+          a.value = a.locked ? a.value : ''
           if (game.fundedLetters.includes(i)) {
               a.value = [...game.word][i]
               increaseCursor && (game.inputIndex = i + 1)
