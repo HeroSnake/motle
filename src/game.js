@@ -308,10 +308,10 @@ function createGame()
             game.user.streak = 0
         } else if (status == 'reroll') {
             // Nothing to do, returning early
-            if (!game.godMode || game.user.reroll < 1) {
-                return game
-            } else if(!game.godMode) {
+            if(!game.godMode && game.user.reroll > 0) {
                 game.user.reroll--
+            } else if (!game.godMode) {
+                return game
             }
         }
 
