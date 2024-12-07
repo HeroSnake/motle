@@ -167,23 +167,13 @@ function createGame()
             game.inputIndex--
         }
 
+        if (currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
+            updateFoundedLetters()
+        }
+
         // Prevent writing same letter ad the first in second position and locked words
         if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
             currentWord[game.inputIndex].value = letter
-        }
-
-        // compute word founded letter
-        if (letter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
-            let increaseCursor = true
-            game.attempts[game.attempts.length - 1].forEach((a, i) => {
-                a.value = ''
-                if (game.fundedLetters.includes(i)) {
-                    a.value = [...game.word][i]
-                    increaseCursor && (gameInstance.inputIndex = i + 1)
-                } else {
-                    increaseCursor = false
-                }
-            })
         }
 
         if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
@@ -193,6 +183,24 @@ function createGame()
         updateClueLetter()
 
         return game
+    })
+
+    /**
+     * Compute word founded letter
+     */
+    const updateFoundedLetters = () => update(game => {
+      let increaseCursor = true
+      game.attempts[game.attempts.length - 1].forEach((a, i) => {
+          a.value = ''
+          if (game.fundedLetters.includes(i)) {
+              a.value = [...game.word][i]
+              increaseCursor && game.inputIndex++
+          } else {
+              increaseCursor = false
+          }
+      })
+
+      return game
     })
 
     const inputVal = l => updateLetter(l)
@@ -271,6 +279,7 @@ function createGame()
             }
 
             letter.showAttemp = true
+            letter.locked = false
             updateLastAttempt(currentWord)
             await laPause(config.revealDelay)
             letter.status = letter.newStatus
@@ -291,7 +300,8 @@ function createGame()
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
             changeGameState('start')
-            suppVal()
+            updateFoundedLetters()
+            updateClueLetter()
         }
     }
 
@@ -307,6 +317,9 @@ function createGame()
         } else if (status == 'fail') {
             game.user.streak = 0
         } else if (status == 'reroll') {
+            if (['success', 'fail'].includes(game.status)) {
+                return game
+            }
             // Nothing to do, returning early
             if(!game.godMode && game.user.reroll > 0) {
                 game.user.reroll--
