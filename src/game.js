@@ -167,7 +167,7 @@ function createGame()
             game.inputIndex--
         }
 
-        if (letter = '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
+        if (letter == '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
             updateFoundedLetters()
         }
 
