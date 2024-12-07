@@ -124,12 +124,13 @@ function createGame()
         storeHistory(game.history)
     })
 
-    const initGame = () => update(game => {
-        init()
+    const initGameStatus = () => update(game => {
         if (history.fundedLetters.length == word.length) {
             game.status = 'success'
-        }
-        else if (game.attempts.length == config.maxTry) {
+        } else if (game.attempts[game.attempts.length - 1].map(l => l.status).includes('unchecked')) {
+            // Player has not submited this try yet
+            game.status = 'start'
+        } else if (game.attempts.length == config.maxTry) {
             game.status = 'fail'
         }
         return game
@@ -166,18 +167,18 @@ function createGame()
         if (letter == '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
             updateFoundedLetters()
         } else {
-          if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
-              game.inputIndex--
-          }
+            if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
+                game.inputIndex--
+            }
 
-          // Prevent writing same letter ad the first in second position and locked words
-          if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
-              currentWord[game.inputIndex].value = letter
-          }
+            // Prevent writing same letter ad the first in second position and locked words
+            if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
+                currentWord[game.inputIndex].value = letter
+            }
 
-          if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
-              game.inputIndex++
-          }
+            if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
+                game.inputIndex++
+            }
         }
 
         updateClueLetter()
@@ -189,16 +190,16 @@ function createGame()
      * Compute word founded letter
      */
     const updateFoundedLetters = () => update(game => {
-      let increaseCursor = true
-      game.attempts[game.attempts.length - 1].forEach((a, i) => {
-          a.value = a.locked ? a.value : ''
-          if (game.fundedLetters.includes(i)) {
-              a.value = [...game.word][i]
-              increaseCursor && (game.inputIndex = i + 1)
-          } else {
-              increaseCursor = false
-          }
-      })
+        let increaseCursor = true
+        game.attempts[game.attempts.length - 1].forEach((a, i) => {
+            a.value = a.locked ? a.value : ''
+            if (game.fundedLetters.includes(i)) {
+                a.value = [...game.word][i]
+                increaseCursor && (game.inputIndex = i + 1)
+            } else {
+                increaseCursor = false
+            }
+        })
 
       return game
     })
@@ -373,16 +374,17 @@ function createGame()
         })
         sharingString += '\nScore | ' + getScore()
 
-		navigator.clipboard.writeText(sharingString)
+        navigator.clipboard.writeText(sharingString)
     }
 
-	const useClue = () => update(game => {
-		if(['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
-			currentWord[game.inputIndex] = { value: [...game.word][game.inputIndex], status: 'clued' }
-			game.cluedIdx.push(game.inputIndex)
-		}
+  	const useClue = () => update(game => {
+        if(['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
+            currentWord[game.inputIndex] = { value: [...game.word][game.inputIndex], status: 'clued' }
+            game.cluedIdx.push(game.inputIndex)
+        }
+
         return game
-	})
+  	})
 
     const updateClueLetter = () => update(game => {
         game.cluedIdx.forEach(i => {
@@ -419,7 +421,7 @@ function createGame()
         return game
     })
 
-    initGame()
+    initGameStatus()
 
     return {
         subscribe,
