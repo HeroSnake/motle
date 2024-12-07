@@ -18,7 +18,7 @@
         </span>
         <span><Icon data={ star }/>{$game.user.highScore}</span>
         <MainFlame />
-        <span on:click={game.reset}><Icon class="reset" data={ refresh }/>{ $game.user.reroll }</span>
+        <span on:click={game.reroll}><Icon class="reset" data={ refresh }/>{ $game.user.reroll }</span>
     </div>
     <span class="help {$game.clues > 0 ? 'up' : 'down'}" on:click={game.useClue}>
         <Icon data={ lightbulbO } scale={2}/>

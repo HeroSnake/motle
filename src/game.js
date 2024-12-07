@@ -135,23 +135,13 @@ function createGame()
         return game
     })
 
-    const updateGameStatus = status => update(game => ({...game, status }))
-
     const changeFlame = flame => update(game => {
         game.user.selectedFlame = flame
 
         return game
     })
 
-    const reset = () => update(game => {
-        if(game.godMode || game.user.reroll > 0) {
-            if(!game.godMode) {
-                game.user.reroll--
-            }
-            resetGame()
-        }
-        return game
-    })
+    const reroll = () => changeGameState('reroll')
 
     const resetGame = () => update(game => {
         const idx = Math.floor(Math.random() * playableWordsFiltered.length)
@@ -247,7 +237,7 @@ function createGame()
             return
         }
 
-        updateGameStatus('pending')
+        changeGameState('pending')
         const arrayWord = [...gameInstance.word]
         let unchecked = []
         let valids = []
@@ -295,18 +285,17 @@ function createGame()
         update(g => gameInstance)
 
         if (valids.length == gameInstance.word.length) {
-            finishGame('success')
+            changeGameState('success')
         } else if (gameInstance.attempts.length == config.maxTry) {
-            finishGame('fail')
+            changeGameState('fail')
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
-            updateGameStatus('start')
+            changeGameState('start')
             suppVal()
         }
     }
 
-    const finishGame = status => update(game => {
-        game.status = status
+    const changeGameState = status => update(game => {
         if (status == 'success') {
             if(getScore() > game.user.highScore) {
                 game.user.highScore = getScore()
@@ -317,7 +306,17 @@ function createGame()
             }
         } else if (status == 'fail') {
             game.user.streak = 0
+        } else if (status == 'reroll') {
+            // Nothing to do, returning early
+            if (!game.godMode || game.user.reroll < 1) {
+                return game
+            } else if(!game.godMode) {
+                game.user.reroll--
+            }
         }
+
+        game.status = status
+
         return game
     })
 
@@ -418,7 +417,7 @@ function createGame()
         goRight,
         goHome,
         goEnd,
-        reset,
+        reroll,
         resetGame,
         getSharing,
         checkAttempt,

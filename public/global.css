@@ -200,12 +200,6 @@ button {
     opacity: 0.6;
 }
 
-.fail {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .supp {
     grid-column-start: 9;
     grid-column-end: 11;
@@ -506,7 +500,7 @@ body .light:not(.end-game),
 }
 
 .light .fail {
-    background: #000;
+    background: #c5c5c5;
 }
 
 .light.end-game {

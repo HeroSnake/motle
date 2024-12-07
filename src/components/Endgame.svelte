@@ -10,11 +10,18 @@
     const toggleWiki = () => {
         wiki = !wiki
     }
+
+    const resetGame = () => {
+      wiki = false
+      game.resetGame()
+    }
 </script>
 
 {#if !['pending', 'start'].includes($game.status)}
     <div class="end-game-container {$game.status}" transition:slide>
-        <img src="/img/{$game.status}.gif" alt="{$game.status}">
+        {#if $game.status != 'reroll'}
+            <img src="/img/{$game.status}.gif" alt="{$game.status}">
+        {/if}
         <span class="answer" on:click={toggleWiki} on:keydown={toggleWiki}>{$game.word}</span>
 
         {#if wiki}
@@ -23,8 +30,10 @@
 
         <span>Score | { game.getScore() }</span>
         <div class="buttons-block">
-            <button on:click={game.resetGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
-            <button on:click={game.getSharing}><Icon data={ share } scale={2}/>Partager</button>
+            <button on:click={resetGame}><Icon data={ repeat } scale={2}/>REJOUER</button>
+            {#if $game.status != 'reroll'}
+                <button on:click={game.getSharing}><Icon data={ share } scale={2}/>Partager</button>
+            {/if}
         </div>
     </div>
 {/if}
