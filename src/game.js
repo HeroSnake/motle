@@ -167,7 +167,7 @@ function createGame()
             game.inputIndex--
         }
 
-        if (currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
+        if (letter = '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
             updateFoundedLetters()
         }
 
@@ -194,7 +194,7 @@ function createGame()
           a.value = ''
           if (game.fundedLetters.includes(i)) {
               a.value = [...game.word][i]
-              increaseCursor && game.inputIndex++
+              increaseCursor && (game.inputIndex = i + 1)
           } else {
               increaseCursor = false
           }
