@@ -32,7 +32,7 @@ function createGame()
     }
 
     let gameInstance, currentLetter, currentWord, userString
-    const gameStatus = ['start', 'success', 'fail', 'pending']
+    const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
     let user = initConfig('data', {...config.defaultLocalStorage.data})
     let history = initConfig('history', {...config.defaultLocalStorage.history})
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
@@ -299,9 +299,9 @@ function createGame()
             changeGameState('fail')
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
-            changeGameState('start')
             updateFoundedLetters()
             updateClueLetter()
+            changeGameState('start')
         }
     }
 
