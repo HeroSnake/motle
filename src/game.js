@@ -194,7 +194,8 @@ function createGame()
         game.attempts[game.attempts.length - 1].forEach((a, i) => {
             a.value = a.locked ? a.value : ''
             if (game.fundedLetters.includes(i)) {
-                a.value = [...game.word][i]
+                // Keeping current value if letter is locked
+                a.value = a.locked ? a.value : [...game.word][i]
                 increaseCursor && customInput(i + 1)
             } else {
                 increaseCursor = false
