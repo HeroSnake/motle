@@ -3,6 +3,16 @@ import { words } from './words.js'
 import { config } from './config'
 import { playableWords } from './playableWords.js'
 
+const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
+const GameStateMachine = {
+    // NewState: [OldState]
+    start: gameStatus,
+    success: gameStatus,
+    fail: gameStatus,
+    pending: gameStatus,
+    reroll: ['start'],
+}
+
 function createGame()
 {
     // Helpers
@@ -32,7 +42,6 @@ function createGame()
     }
 
     let gameInstance, currentLetter, currentWord, userString
-    const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
     let user = initConfig('data', {...config.defaultLocalStorage.data})
     let history = initConfig('history', {...config.defaultLocalStorage.history})
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
@@ -260,7 +269,6 @@ function createGame()
             }
         })
 
-
         for (const [i, letter] of currentWord.entries()) {
             const keyboardKey = gameInstance.keyboard.find(k => k.value == letter.value)
             if (valids.includes(i)) {
@@ -308,6 +316,11 @@ function createGame()
     }
 
     const changeGameState = status => update(game => {
+        // State transition not allowed, returning early
+        if (!GameStateMachine[status].includes(game.status)) {
+            return game
+        }
+
         if (status == 'success') {
             if(getScore() > game.user.highScore) {
                 game.user.highScore = getScore()
@@ -319,10 +332,6 @@ function createGame()
         } else if (status == 'fail') {
             game.user.streak = 0
         } else if (status == 'reroll') {
-            if (['success', 'fail'].includes(game.status)) {
-                return game
-            }
-            // Nothing to do, returning early
             if(!game.godMode && game.user.reroll > 0) {
                 game.user.reroll--
             } else if (!game.godMode) {
