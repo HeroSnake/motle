@@ -195,13 +195,13 @@ function createGame()
             a.value = a.locked ? a.value : ''
             if (game.fundedLetters.includes(i)) {
                 a.value = [...game.word][i]
-                increaseCursor && (game.inputIndex = i + 1)
+                increaseCursor && customInput(i + 1)
             } else {
                 increaseCursor = false
             }
         })
 
-      return game
+        return game
     })
 
     const inputVal = l => updateLetter(l)
