@@ -168,7 +168,7 @@ function createGame()
 
     // L'ordre dans les conditions est très important !!
     const updateLetter = letter => update(game => {
-        if(game.status == 'pending') {
+        if (game.status == 'pending') {
             return game
         }
         letter = letter.toUpperCase()
@@ -252,7 +252,6 @@ function createGame()
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
             await laPause(config.errorDelay)
             updateLastAttempt(currentWord.map((l, i) => ({...l, status: i == 0 ? 'valid' : 'unchecked' })))
-            updateClueLetter()
             return
         }
 
@@ -261,13 +260,7 @@ function createGame()
         let unchecked = []
         let valids = []
 
-        currentWord.forEach((letter, i) => {
-            if (letter.value == arrayWord[i]) {
-                valids.push(i)
-            } else {
-                unchecked.push(arrayWord[i])
-            }
-        })
+        currentWord.forEach((letter, i) => letter.value == arrayWord[i] ? valids.push(i) : unchecked.push(arrayWord[i]))
 
         for (const [i, letter] of currentWord.entries()) {
             const keyboardKey = gameInstance.keyboard.find(k => k.value == letter.value)
@@ -281,7 +274,7 @@ function createGame()
                     keyboardKey.status = 'in-word'
                     unchecked.splice(idx, 1)
                 } else {
-                    if(keyboardKey.status == 'unchecked') {
+                    if (keyboardKey.status == 'unchecked') {
                         keyboardKey.status = 'invalid'
                     }
                     letter.newStatus = 'invalid'
@@ -322,17 +315,17 @@ function createGame()
         }
 
         if (status == 'success') {
-            if(getScore() > game.user.highScore) {
+            if (getScore() > game.user.highScore) {
                 game.user.highScore = getScore()
             }
             game.user.streak += Math.floor(Math.log2(getScore() / 100))
-            if(game.user.reroll < 1 && game.user.streak % 2 == 0) {
+            if (game.user.reroll < 1 && game.user.streak % 2 == 0) {
                 game.user.reroll++
             }
         } else if (status == 'fail') {
             game.user.streak = 0
         } else if (status == 'reroll') {
-            if(!game.godMode && game.user.reroll > 0) {
+            if (!game.godMode && game.user.reroll > 0) {
                 game.user.reroll--
             } else if (!game.godMode) {
                 return game
@@ -388,7 +381,7 @@ function createGame()
     }
 
   	const useClue = () => update(game => {
-        if(['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
+        if (['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
             currentWord[game.inputIndex] = { value: [...game.word][game.inputIndex], status: 'clued' }
             game.cluedIdx.push(game.inputIndex)
         }
@@ -425,7 +418,7 @@ function createGame()
 
     const clearStorage = () => update(game => {
         game.user = config.defaultLocalStorage.data
-        if(game.godMode) {
+        if (game.godMode) {
             game.user.username = config.godMode
         }
         return game
