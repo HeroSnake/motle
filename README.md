@@ -34,7 +34,7 @@ yarn install
 Start the development server:
 
 npm run dev
-# or
+### or
 yarn dev
 
 Open the app in your browser:
@@ -46,7 +46,7 @@ Open the app in your browser:
 To create an optimized production build:
 
 npm run build
-# or
+### or
 yarn build
 
 The output will be in the dist directory. You can serve it using any static file server.
