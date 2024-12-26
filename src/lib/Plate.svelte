@@ -1,5 +1,5 @@
 <script>
-    import { Col } from "sveltestrap"
+    import { Col } from "@sveltestrap/sveltestrap"
     import { game } from "../game.js"
     import { config } from "../config.js"
     import Letter from "./Letter.svelte"

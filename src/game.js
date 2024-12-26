@@ -49,7 +49,6 @@ function createGame()
     let word = ''
     let modalName = false
     let godMode = user.username == config.godMode
-    let hitMarker = new Audio('./audio/hitMarker.mp3')
 
     const getNextAttempt = word => [...word].map((l, i) => ({
         value: !i ? l : '',

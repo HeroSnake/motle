@@ -1,7 +1,7 @@
 <script>
     import Icon from 'svelte-awesome'
 	import { slide } from 'svelte/transition'
-    import { Col } from 'sveltestrap'
+    import { Col } from '@sveltestrap/sveltestrap'
 	import { arrowDown, arrowLeft } from 'svelte-awesome/icons'
     import { game } from '../game.js'
 
