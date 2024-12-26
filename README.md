@@ -1,38 +1,79 @@
-# sv
+Motle
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Motle is a fun word-guessing game built with Svelte and Vite. The game uses a pool of 2,000 French words to challenge players' vocabulary and problem-solving skills.
+Features
 
-## Creating a project
+    Interactive Gameplay: Guess the correct word in a limited number of attempts.
+    Dynamic UI: Responsive and intuitive interface built with Svelte.
+    Efficient Development: Powered by Vite for fast development and builds.
+    French Word Bank: Features a diverse selection of 2,000 French words.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Getting Started
 
-```bash
-# create a new project in the current directory
-npx sv create
+Follow these steps to get the project up and running on your local machine.
+Prerequisites
 
-# create a new project in my-app
-npx sv create my-app
-```
+Ensure you have the following installed:
 
-## Developing
+    Node.js (v14 or later)
+    npm or Yarn
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Installation
 
-```bash
+    Clone the repository:
+
+git clone https://github.com/your-username/motle.git
+cd motle
+
+Install dependencies:
+
+npm install
+# or
+yarn install
+
+Start the development server:
+
 npm run dev
+# or
+yarn dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Open the app in your browser:
 
-## Building
+    http://localhost:5173
 
-To create a production version of your app:
+Building for Production
 
-```bash
+To create an optimized production build:
+
 npm run build
-```
+# or
+yarn build
 
-You can preview the production build with `npm run preview`.
+The output will be in the dist directory. You can serve it using any static file server.
+Project Structure
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+motle/
+├── public/         # Static assets
+├── src/
+│   ├── assets/     # Images, fonts, and other assets
+│   ├── components/ # Svelte components
+│   ├── routes/     # Application routes
+│   ├── store/      # State management
+│   ├── App.svelte  # Root component
+│   ├── main.js     # Entry point
+├── .gitignore
+├── package.json
+├── README.md
+└── vite.config.js  # Vite configuration
+
+Customization
+
+    Word List: The French word bank is stored in src/assets/words.json. You can replace or expand this list as needed.
+    Styling: Modify src/assets/styles.css for custom themes or styles.
+
+Contribution
+
+Contributions are welcome! Feel free to submit issues or pull requests to improve the game.
+License
+
+This project is licensed under the MIT License.
