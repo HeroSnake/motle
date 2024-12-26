@@ -215,6 +215,10 @@ function createGame()
 
     const inputVal = l => updateLetter(l)
     const suppVal = () => updateLetter('')
+    const clearAttempt = () => update(game => {
+        currentWord.forEach((l, k) => k && (l.value = ''))
+        return game
+    })
 
     const customInput = index => update(game => {
         if (index > 0 && index < game.word.length) {
@@ -429,6 +433,7 @@ function createGame()
         subscribe,
         inputVal,
         suppVal,
+        clearAttempt,
         customInput,
         goLeft,
         goRight,

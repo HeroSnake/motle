@@ -38,6 +38,16 @@
 			}
 		}
 	}
+
+    let longPressTimeout;
+	const longPress = (() => ({
+	    start(callback) {
+			longPressTimeout = setTimeout(callback, 1000)
+		},
+		stop() {
+            clearTimeout(longPressTimeout)
+		}
+	}))()
 </script>
 
 <svelte:window on:keydown={keyInput}/>
@@ -52,7 +62,7 @@
                 {/if}
                 <div class="keyboard-letter keyboard-input { key.status }" on:click={() => game.inputVal(key.value)} on:keydown={() => game.inputVal(key.value)}>{ key.value }</div>
             {/each}
-            <div class="keyboard-key keyboard-input supp" on:click={ game.suppVal } on:keydown={ game.suppVal }>
+            <div class="keyboard-key keyboard-input supp" on:click={ game.suppVal } on:touchstart={() => longPress.start(game.clearAttempt)} on:touchend={longPress.stop}>
                 <Icon data={ arrowLeft }/>
             </div>
         </Col>
