@@ -1,4 +1,4 @@
-### Motle
+# Motle
 
 Motle is a fun word-guessing game built with Svelte and Vite. The game uses a pool of 2,000 French words to challenge players' vocabulary and problem-solving skills.
 Features
@@ -8,7 +8,7 @@ Features
     Efficient Development: Powered by Vite for fast development and builds.
     French Word Bank: Features a diverse selection of 2,000 French words.
 
-Getting Started
+## Getting Started
 
 Follow these steps to get the project up and running on your local machine.
 Prerequisites
@@ -18,7 +18,7 @@ Ensure you have the following installed:
     Node.js (v14 or later)
     npm or Yarn
 
-Installation
+## Installation
 
     Clone the repository:
 
@@ -41,7 +41,7 @@ Open the app in your browser:
 
     http://localhost:5173
 
-Building for Production
+### Building for Production
 
 To create an optimized production build:
 
@@ -66,14 +66,9 @@ motle/
 ├── README.md
 └── vite.config.js  # Vite configuration
 
-Customization
+### Customization
 
     Word List: The French word bank is stored in src/assets/words.json. You can replace or expand this list as needed.
     Styling: Modify src/assets/styles.css for custom themes or styles.
 
-Contribution
-
-Contributions are welcome! Feel free to submit issues or pull requests to improve the game.
-License
-
-This project is licensed under the MIT License.
+This project is licensed under my License.
