@@ -1,6 +1,6 @@
 <script>
     import { slide } from 'svelte/transition'
-	import { Input } from 'sveltestrap'
+	import { Input } from '@sveltestrap/sveltestrap'
 	import { game } from '../game.js'
 </script>
 
