@@ -51,7 +51,7 @@ yarn build
 
 The output will be in the dist directory. You can serve it using any static file server.
 Project Structure
-
+```
 motle/
 ├── public/         # Static assets
 ├── src/
@@ -65,7 +65,7 @@ motle/
 ├── package.json
 ├── README.md
 └── vite.config.js  # Vite configuration
-
+```
 ### Customization
 
     Word List: The French word bank is stored in src/assets/words.json. You can replace or expand this list as needed.
