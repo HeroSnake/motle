@@ -56,6 +56,7 @@ function createGame()
         newStatus: !i ? 'valid' : 'unchecked',
         showAttemp: false,
         locked: false,
+        clued: false,
     }))
 
     const unique = (value, index, self) => self.indexOf(value) === index
@@ -172,7 +173,8 @@ function createGame()
         }
         letter = letter.toUpperCase()
 
-        if (letter == '' && currentLetter == '' && game.inputIndex == 1 && game.fundedLetters.length) {
+        if (letter == '' && currentLetter == '' && game.inputIndex == 1) {
+            updateClueLetter()
             updateFoundedLetters()
         } else {
             if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
@@ -182,14 +184,13 @@ function createGame()
             // Prevent writing same letter ad the first in second position and locked words
             if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
                 currentWord[game.inputIndex].value = letter
+                currentWord[game.inputIndex].status = 'unchecked'
             }
 
             if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
                 game.inputIndex++
             }
         }
-
-        updateClueLetter()
 
         return game
     })
@@ -199,11 +200,15 @@ function createGame()
      */
     const updateFoundedLetters = () => update(game => {
         let increaseCursor = true
-        game.attempts[game.attempts.length - 1].forEach((a, i) => {
-            a.value = a.locked ? a.value : ''
+        currentWord.forEach((a, i) => {
+            if (!i || a.locked || a.clued && a.status == 'clued') {
+                return
+            }
+
+            a.value = ''
             if (game.fundedLetters.includes(i)) {
                 // Keeping current value if letter is locked
-                a.value = a.locked ? a.value : [...game.word][i]
+                a.value = [...game.word][i]
                 increaseCursor && customInput(i + 1)
             } else {
                 increaseCursor = false
@@ -306,6 +311,7 @@ function createGame()
             changeGameState('fail')
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
+            update(g => gameInstance)
             updateFoundedLetters()
             updateClueLetter()
             changeGameState('start')
@@ -384,20 +390,20 @@ function createGame()
         navigator.clipboard.writeText(sharingString)
     }
 
-  	const useClue = () => update(game => {
-        if (['start'].includes(game.status) && game.cluedIdx.length < game.clues) {
-            currentWord[game.inputIndex] = { value: [...game.word][game.inputIndex], status: 'clued' }
-            game.cluedIdx.push(game.inputIndex)
+    const useClue = () => {
+        if (['start'].includes(gameInstance.status) && gameInstance.cluedIdx.length < gameInstance.clues) {
+            gameInstance.cluedIdx.push(gameInstance.inputIndex)
+            update(g => gameInstance)
+            updateClueLetter()
         }
-
-        return game
-  	})
+    }
 
     const updateClueLetter = () => update(game => {
         game.cluedIdx.forEach(i => {
-            game.attempts[game.attempts.length - 1][i].status = 'clued'
             if (currentWord[i].value == '') {
-                game.attempts[game.attempts.length - 1][i].value = [...game.word][i]
+                currentWord[i].status = 'clued'
+                currentWord[i].clued = true
+                currentWord[i].value = [...game.word][i]
             }
         })
         return game
