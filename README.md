@@ -1,4 +1,4 @@
-Motle
+### Motle
 
 Motle is a fun word-guessing game built with Svelte and Vite. The game uses a pool of 2,000 French words to challenge players' vocabulary and problem-solving skills.
 Features
