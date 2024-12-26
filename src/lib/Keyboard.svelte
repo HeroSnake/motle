@@ -42,7 +42,7 @@
     let longPressTimeout;
 	const longPress = {
 	    start(callback) {
-			longPressTimeout = setTimeout(callback, 1000)
+			longPressTimeout = setTimeout(callback, 800)
 		},
 		stop() {
             clearTimeout(longPressTimeout)

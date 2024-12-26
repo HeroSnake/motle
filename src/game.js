@@ -217,6 +217,7 @@ function createGame()
     const suppVal = () => updateLetter('')
     const clearAttempt = () => update(game => {
         currentWord.forEach((l, k) => k && (l.value = ''))
+        game.inputIndex = 1
         return game
     })
 
