@@ -40,14 +40,14 @@
 	}
 
     let longPressTimeout;
-	const longPress = (() => ({
+	const longPress = {
 	    start(callback) {
 			longPressTimeout = setTimeout(callback, 1000)
 		},
 		stop() {
             clearTimeout(longPressTimeout)
 		}
-	}))()
+	}
 </script>
 
 <svelte:window on:keydown={keyInput}/>
