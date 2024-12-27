@@ -394,13 +394,13 @@ function createGame()
         if (['start'].includes(gameInstance.status) && gameInstance.cluedIdx.length < gameInstance.clues) {
             gameInstance.cluedIdx.push(gameInstance.inputIndex)
             update(g => gameInstance)
-            updateClueLetter()
+            updateClueLetter(true)
         }
     }
 
-    const updateClueLetter = () => update(game => {
+    const updateClueLetter = (force = false) => update(game => {
         game.cluedIdx.forEach(i => {
-            if (currentWord[i].value == '') {
+            if (currentWord[i].value == '' || force) {
                 currentWord[i].status = 'clued'
                 currentWord[i].clued = true
                 currentWord[i].value = [...game.word][i]
