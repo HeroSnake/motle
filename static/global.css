@@ -158,6 +158,10 @@ button {
     grid-gap: 8px;
 }
 
+.keyboard-container > .keyboard-input {
+    border: none;
+}
+
 .keyboard {
     padding: 10px;
     width: 100%;
@@ -263,6 +267,10 @@ button {
 
 .supp {
     background-color: #bd4747 !important;
+}
+
+.supp:active, .enter:active {
+    filter: brightness(2);
 }
 
 .enter {
