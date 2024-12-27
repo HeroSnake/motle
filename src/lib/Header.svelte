@@ -2,7 +2,7 @@
     import Icon from 'svelte-awesome'
 	import { lightbulbO, star, user, refresh } from 'svelte-awesome/icons'
     import MainFlame from './Flames/MainFlame.svelte';
-    import { game } from '../game'
+    import { game, showModalName } from '../game.js'
     import { config } from '../config.js'
 
     $: theme = config.themes.find(t => t.name == $game.user.theme)
@@ -13,7 +13,7 @@
 <div class="header">
     <span class="logo" style="color:{theme};" on:click={game.changeTheme}>M</span>
     <div class="mid-container">
-        <span on:click={() => game.setModalName(true)} class="username">
+        <span on:click={() => showModalName.set(true)} class="username">
             <Icon data={ user }/><span>{@html username}</span>
         </span>
         <span><Icon data={ star }/>{$game.user.highScore}</span>
@@ -22,6 +22,6 @@
     </div>
     <span class="help {$game.clues > 0 ? 'up' : 'down'}" on:click={game.useClue}>
         <Icon data={ lightbulbO } scale={2}/>
-        <small>x{$game.clues - $game.cluedIdx.length}</small>
+        <small>x{Math.max($game.clues - $game.cluedIdx.length, 0)}</small>
     </span>
 </div>

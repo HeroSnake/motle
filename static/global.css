@@ -402,7 +402,7 @@ html, body .dark:not(.end-game), .dark:not(.end-game) .page {
     filter: drop-shadow(0 0 0.55rem #ffd900);
 }
 
-.dark .fail {
+.dark.end-game:has(.fail) {
     background: #000;
 }
 
@@ -505,10 +505,6 @@ body .light:not(.end-game),
 
 .light .help.up:hover {
     filter: drop-shadow(0 0 0.55rem #ffd900);
-}
-
-.light .fail {
-    background: #c5c5c5;
 }
 
 .light.end-game {

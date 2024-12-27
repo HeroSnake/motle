@@ -3,7 +3,7 @@
     import { slide } from 'svelte/transition'
     import { Col } from '@sveltestrap/sveltestrap'
     import { arrowDown, arrowLeft } from 'svelte-awesome/icons'
-    import { game } from '../game.js'
+    import { game, showModalName } from '../game.js'
     import { longpress } from '../action.js'
 
     $: keyInput = event => {
@@ -27,7 +27,7 @@
                             game.goLeft()
                             break
                         case 'HOME':
-                            game.goHome()
+                            game.goStart()
                             break
                         case 'END':
                             game.goEnd()
@@ -35,7 +35,7 @@
                     }
                 }
             } else if (val == 'ENTER') {
-                game.setModalName(false)
+                showModalName.set(false)
             }
         }
     }

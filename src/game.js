@@ -2,6 +2,7 @@ import { writable } from 'svelte/store'
 import { words } from './words.js'
 import { config } from './config'
 import { playableWords } from './playableWords.js'
+import { laPause, lePulse, unique, saveToLocalStorage } from './action.js'
 
 const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
 const GameStateMachine = {
@@ -15,25 +16,6 @@ const GameStateMachine = {
 
 function createGame()
 {
-    // Helpers
-    const laPause = t => new Promise(resolve => setTimeout(resolve, t))
-    const lePulse = (t, amount, callback) => new Promise(resolve => {
-        let counter = 0;
-        const interval = setInterval(() => {
-            if (counter <= amount) {
-                counter++
-                callback()
-            } else {
-                clearInterval(interval)
-                resolve()
-            }
-        }, t)
-    })
-
-    const saveToLocalStorage = (key, value) => {localStorage.setItem(key, JSON.stringify(value))}
-    const storeUser = user => saveToLocalStorage('data', user)
-    const storeHistory = history => saveToLocalStorage('history', history)
-
     const initConfig = (key, defaultLocalStorage) => {
         let userLocalStorage = null
         try {
@@ -71,9 +53,7 @@ function createGame()
         clued: false,
     }))
 
-    const unique = (value, index, self) => self.indexOf(value) === index
-
-    const initKeyboard = () => {
+    function initKeyboard() {
         let status = 'unchecked'
         const valids = []
         const invalids = []
@@ -119,43 +99,42 @@ function createGame()
     // WRITABLE OBJECT
     const { subscribe, set, update } = writable({
         status: gameStatus[0],
-        word: word,
+        word,
         inputIndex: 1,
         attempts: history.attempts,
         fundedLetters: history.fundedLetters,
         keyboard: initKeyboard(),
         clues: 1,
-        user: user,
-        history: history,
+        user,
+        history,
         cluedIdx: history.clues,
-        modalName: modalName,
-        godMode: godMode
+        modalName,
+        godMode
     })
 
     // Adding ref game
-    const sub = subscribe(game => {
+    subscribe(game => {
         gameInstance = game
         currentWord = game.attempts[game.attempts.length - 1]
-        currentLetter = currentWord[game.inputIndex].value
+        currentLetter = currentWord[game.inputIndex]
         userString = currentWord.map(l => l.value).join('')
         history.attempts = game.attempts
         history.clues = game.cluedIdx
         history.fundedLetters = game.fundedLetters
-        storeUser(game.user)
-        storeHistory(game.history)
+        saveToLocalStorage('data', game.user)
+        saveToLocalStorage('history', game.history)
     })
 
-    const initGameStatus = () => update(game => {
+    function initGameStatus() {
         if (history.fundedLetters.length == word.length) {
-            game.status = 'success'
-        } else if (game.attempts[game.attempts.length - 1].map(l => l.status).includes('unchecked')) {
-            // Player has not submited this try yet
-            game.status = 'start'
-        } else if (game.attempts.length == config.maxTry) {
-            game.status = 'fail'
+            gameInstance.status = 'success'
+        } else if (gameInstance.attempts.length == config.maxTry && !currentWord.map(l => l.status).includes('unchecked')) {
+            // Last attempt allready submited
+            gameInstance.status = 'fail'
         }
-        return game
-    })
+
+        update(game => gameInstance)
+    }
 
     const changeFlame = flame => update(game => {
         game.user.selectedFlame = flame
@@ -179,37 +158,36 @@ function createGame()
     })
 
     // L'ordre dans les conditions est très important !!
-    const updateLetter = letter => update(game => {
-        if (game.status == 'pending') {
-            return game
+    function updateLetter(letter) {
+        if (gameInstance.status != 'start') {
+            return
         }
         letter = letter.toUpperCase()
 
-        if (letter == '' && currentLetter == '' && game.inputIndex == 1) {
+        if (letter == '' && currentLetter.value == '' && gameInstance.inputIndex == 1) {
             clearAttempt()
-            updateClueLetter()
             updateFoundedLetters()
         } else {
-            if (letter == '' && game.inputIndex > 1 && (currentLetter == '' || game.cluedIdx.includes(game.inputIndex) || currentWord[game.inputIndex].locked)) {
-                game.inputIndex--
+            if (letter == '' && (currentLetter.value == '' || currentLetter.status == 'clued' || currentLetter.locked)) {
+                goLeft()
             }
 
             // Prevent writing same letter ad the first in second position and locked words
-            if ((game.inputIndex != 1 || [...game.word].shift() != letter) && !currentWord[game.inputIndex].locked) {
-                currentWord[game.inputIndex].value = letter
-                currentWord[game.inputIndex].status = 'unchecked'
+            if ((gameInstance.inputIndex != 1 || gameInstance.word[0] != letter) && !currentLetter.locked) {
+                currentLetter.value = letter
+                currentLetter.status = 'unchecked'
+                update(game => gameInstance)
             }
 
-            if (letter != '' && game.inputIndex < game.word.length - 1 && (game.inputIndex != 1 || [...game.word].shift() != letter)) {
-                game.inputIndex++
+            if (letter != '' && (gameInstance.inputIndex != 1 || gameInstance.word[0] != letter)) {
+                goRight()
             }
         }
-
-        return game
-    })
+    }
 
     /** Compute word founded letter */
     const updateFoundedLetters = () => update(game => {
+        updateClueLetter()
         let increaseCursor = true
         currentWord.forEach((a, i) => {
             if (game.fundedLetters.includes(i) || a.clued) {
@@ -249,8 +227,7 @@ function createGame()
 
     const goLeft = () => customInput(gameInstance.inputIndex - 1)
     const goRight = () => customInput(gameInstance.inputIndex + 1)
-
-    const goHome = () => customInput(1)
+    const goStart = () => customInput(1)
     const goEnd = () => customInput(currentWord.length - 1)
 
     const updateLastAttempt = attempt => update(game => {
@@ -258,7 +235,7 @@ function createGame()
         return game
     })
 
-    const checkAttempt = async () => {
+    async function checkAttempt() {
         if (currentWord.findIndex(l => l.value == '') != -1 || gameInstance.status != 'start') {
             return
         }
@@ -322,7 +299,6 @@ function createGame()
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
             update(g => gameInstance)
             updateFoundedLetters()
-            updateClueLetter()
             changeGameState('start')
         }
     }
@@ -356,7 +332,7 @@ function createGame()
         return game
     })
 
-    const getScore = () => {
+    function getScore() {
         let valids = [...gameInstance.word]
         let bonus = 0
         let playerScore = 0
@@ -380,7 +356,7 @@ function createGame()
         return playerScore
     }
 
-    const getSharing = () => {
+    function getSharing() {
         let sharingString = config.sharingHeader + '\n'
         gameInstance.attempts.forEach(w => {
             w.forEach(l => {
@@ -399,24 +375,25 @@ function createGame()
         navigator.clipboard.writeText(sharingString)
     }
 
-    const useClue = () => {
-        if (['start'].includes(gameInstance.status) && gameInstance.cluedIdx.length < gameInstance.clues) {
+    function useClue() {
+        if (['start'].includes(gameInstance.status) && (gameInstance.cluedIdx.length < gameInstance.clues || gameInstance.godMode)) {
             gameInstance.cluedIdx.push(gameInstance.inputIndex)
             update(g => gameInstance)
             updateClueLetter(true)
         }
     }
 
-    const updateClueLetter = (force = false) => update(game => {
-        game.cluedIdx.forEach(i => {
+    function updateClueLetter(force = false) {
+        gameInstance.cluedIdx.forEach(i => {
             if (currentWord[i].value == '' || force) {
                 currentWord[i].status = 'clued'
                 currentWord[i].clued = true
-                currentWord[i].value = [...game.word][i]
+                currentWord[i].value = [...gameInstance.word][i]
             }
         })
-        return game
-    })
+
+        update(game => gameInstance)
+    }
 
     const inputName = (e) => update(game => {
         game.user.username = e.target.value
@@ -427,11 +404,6 @@ function createGame()
     const changeTheme = () => update(game => {
         let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.user.theme) + 1) % config.themes.length]
         game.user.theme = newTheme.name
-        return game
-    })
-
-    const setModalName = (bool) => update(game => {
-        game.modalName = bool
         return game
     })
 
@@ -453,7 +425,7 @@ function createGame()
         customInput,
         goLeft,
         goRight,
-        goHome,
+        goStart,
         goEnd,
         reroll,
         resetGame,
@@ -463,7 +435,6 @@ function createGame()
         useClue,
         inputName,
         changeTheme,
-        setModalName,
         clearStorage,
         changeFlame,
         toggleLockLetter,
@@ -471,3 +442,5 @@ function createGame()
 }
 
 export const game = createGame()
+
+export const showModalName = writable(false)
