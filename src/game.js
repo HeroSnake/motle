@@ -17,6 +17,18 @@ function createGame()
 {
     // Helpers
     const laPause = t => new Promise(resolve => setTimeout(resolve, t))
+    const lePulse = (t, amount, callback) => new Promise(resolve => {
+        let counter = 0;
+        const interval = setInterval(() => {
+            if (counter <= amount) {
+                counter++
+                callback()
+            } else {
+                clearInterval(interval)
+                resolve()
+            }
+        }, t)
+    })
 
     const saveToLocalStorage = (key, value) => {localStorage.setItem(key, JSON.stringify(value))}
     const storeUser = user => saveToLocalStorage('data', user)
@@ -174,6 +186,7 @@ function createGame()
         letter = letter.toUpperCase()
 
         if (letter == '' && currentLetter == '' && game.inputIndex == 1) {
+            clearAttempt()
             updateClueLetter()
             updateFoundedLetters()
         } else {
@@ -195,20 +208,13 @@ function createGame()
         return game
     })
 
-    /**
-     * Compute word founded letter
-     */
+    /** Compute word founded letter */
     const updateFoundedLetters = () => update(game => {
         let increaseCursor = true
         currentWord.forEach((a, i) => {
-            if (!i || a.locked || a.clued && a.status == 'clued') {
-                return
-            }
-
-            a.value = ''
-            if (game.fundedLetters.includes(i)) {
+            if (game.fundedLetters.includes(i) || a.clued) {
                 // Keeping current value if letter is locked
-                a.value = [...game.word][i]
+                !a.locked && (a.value = [...game.word][i])
                 increaseCursor && customInput(i + 1)
             } else {
                 increaseCursor = false
@@ -221,7 +227,8 @@ function createGame()
     const inputVal = l => updateLetter(l)
     const suppVal = () => updateLetter('')
     const clearAttempt = () => update(game => {
-        currentWord.forEach((l, k) => k && (l.value = ''))
+        // If not first key and not locked we clear the tile
+        currentWord.forEach((l, k) => k && !l.locked && (l.value = ''))
         game.inputIndex = 1
         return game
     })
@@ -258,9 +265,11 @@ function createGame()
 
         //ERREUR MOT INCONNU
         if (!(wordsFiltered.includes(userString) || playableWordsFiltered.includes(userString))) {
-            updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
-            await laPause(config.errorDelay)
-            updateLastAttempt(currentWord.map((l, i) => ({...l, status: i == 0 ? 'valid' : 'unchecked' })))
+            await lePulse(config.transitions.duration, 4, async () => {
+                updateLastAttempt(currentWord.map((l, i) => ({...l, status: 'error' })))
+                await laPause(config.transitions.time)
+                updateLastAttempt(currentWord.map((l, i) => ({...l, status: i == 0 ? 'valid' : 'unchecked' })))
+            })
             return
         }
 

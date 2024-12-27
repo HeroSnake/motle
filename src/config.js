@@ -37,7 +37,6 @@ export const config = {
     minLength: 5,
     maxLength: 8,
     revealDelay: 250,
-    errorDelay: 100,
     godMode: 'tgm',
     transitions: {
         time: 100,
