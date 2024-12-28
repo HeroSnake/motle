@@ -1,17 +1,16 @@
 <script>
     import Icon from 'svelte-awesome'
 	import { lightbulbO, star, user, refresh } from 'svelte-awesome/icons'
-    import MainFlame from './Flames/MainFlame.svelte';
+    import MainFlame from './Flames/MainFlame.svelte'
     import { game, showModalName } from '../game.js'
+    import { theme } from '../theme.js'
     import { config } from '../config.js'
 
-    $: theme = config.themes.find(t => t.name == $game.user.theme)
-
-    $: username = $game.user.username.length ? $game.user.username : ' - '
+    $: username = $game.user.username || ' - '
 </script>
 
 <div class="header">
-    <span class="logo" style="color:{theme};" on:click={game.changeTheme}>M</span>
+    <span class="logo" style="color:{$theme.preview};" on:click={theme.changeTheme}>M</span>
     <div class="mid-container">
         <span on:click={() => showModalName.set(true)} class="username">
             <Icon data={ user }/><span>{@html username}</span>

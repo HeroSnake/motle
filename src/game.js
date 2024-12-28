@@ -2,7 +2,7 @@ import { writable } from 'svelte/store'
 import { words } from './words.js'
 import { config } from './config'
 import { playableWords } from './playableWords.js'
-import { laPause, lePulse, unique, saveToLocalStorage } from './action.js'
+import { laPause, lePulse, unique, saveToLocalStorage, getLocalStorage } from './action.js'
 
 const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
 const GameStateMachine = {
@@ -16,28 +16,9 @@ const GameStateMachine = {
 
 function createGame()
 {
-    const initConfig = (key, defaultLocalStorage) => {
-        let userLocalStorage = null
-        try {
-            userLocalStorage = JSON.parse(localStorage.getItem(key))
-        } catch {}
-
-        if (!userLocalStorage) {
-            return defaultLocalStorage
-        }
-
-        for (const key in defaultLocalStorage) {
-            if (!Object.hasOwnProperty.call(userLocalStorage, key)) {
-                userLocalStorage[key] = defaultLocalStorage[key];
-            }
-        }
-
-        return userLocalStorage
-    }
-
     let gameInstance, currentLetter, currentWord, userString
-    let user = initConfig('data', {...config.defaultLocalStorage.data})
-    let history = initConfig('history', {...config.defaultLocalStorage.history})
+    let user = getLocalStorage('data', {...config.defaultLocalStorage.data})
+    let history = getLocalStorage('history', {...config.defaultLocalStorage.history})
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     const playableWordsFiltered = Object.freeze([...playableWords.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     let word = ''
@@ -378,6 +359,7 @@ function createGame()
     function useClue() {
         if (['start'].includes(gameInstance.status) && (gameInstance.cluedIdx.length < gameInstance.clues || gameInstance.godMode)) {
             gameInstance.cluedIdx.push(gameInstance.inputIndex)
+            goRight()
             update(g => gameInstance)
             updateClueLetter(true)
         }

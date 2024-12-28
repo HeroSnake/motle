@@ -28,9 +28,9 @@ export const config = {
         { value: 'N', status: 'unchecked', score: 1 }
     ],
     themes: [
-        { name: 'light', preview: '#ccc' },
-        { name: 'dark', preview: '#d700f999' },
-        // { name: 'neon', preview: '' }
+        { name: 'light', preview: '#333333' },
+        { name: 'dark', preview: '#eeeeee' },
+        // { name: 'neon', preview: '#d700f999' }
     ],
     clues: 1,
     maxTry: 6,

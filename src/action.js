@@ -39,3 +39,26 @@ export const lePulse = (t, amount, callback) => new Promise(resolve => {
 export const unique = (value, index, self) => self.indexOf(value) === index
 
 export const saveToLocalStorage = (key, value) => {localStorage.setItem(key, JSON.stringify(value))}
+
+export const getLocalStorage = (key, defaultLocalStorage) => {
+    let localStorageValue = null
+    try {
+        localStorageValue = JSON.parse(localStorage.getItem(key))
+    } catch {}
+
+    if (localStorageValue === null) {
+        return defaultLocalStorage
+    }
+
+    switch (typeof defaultLocalStorage) {
+        case 'object':
+            for (const key in defaultLocalStorage) {
+                if (!Object.hasOwnProperty.call(localStorageValue, key)) {
+                    localStorageValue[key] = defaultLocalStorage[key];
+                }
+            }
+            break;
+    }
+
+    return localStorageValue
+}
