@@ -16,13 +16,12 @@ const GameStateMachine = {
 
 function createGame()
 {
-    let gameInstance, currentLetter, currentWord, userString
+    // Instance game var
+    let gameInstance, currentLetter, currentWord, userString, word
     let user = getLocalStorage('data', {...config.defaultLocalStorage.data})
     let history = getLocalStorage('history', {...config.defaultLocalStorage.history})
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     const playableWordsFiltered = Object.freeze([...playableWords.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
-    let word = ''
-    let modalName = false
     let godMode = user.username == config.godMode
 
     const getNextAttempt = word => [...word].map((l, i) => ({
@@ -89,7 +88,6 @@ function createGame()
         user,
         history,
         cluedIdx: history.clues,
-        modalName,
         godMode
     })
 

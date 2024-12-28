@@ -9,7 +9,7 @@
     $: keyInput = event => {
         let val = event.key.toUpperCase()
         if ($game.status == 'start') {
-            if (!$game.modalName) {
+            if (!$showModalName) {
                 if ($game.keyboard.find(k => k.value == val)) {
                     game.inputVal(val)
                 } else {
@@ -42,7 +42,7 @@
 </script>
 
 <svelte:window on:keydown={keyInput}/>
-{#if ['pending', 'start'].includes($game.status) && !$game.modalName}
+{#if ['pending', 'start'].includes($game.status) && !$showModalName}
     <div class="keyboard" transition:slide>
         <Col xs="12" lg="5" class="keyboard-container">
             {#each $game.keyboard as key, index}

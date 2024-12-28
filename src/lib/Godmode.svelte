@@ -16,7 +16,7 @@
     }
 </script>
 
-{#if $game.godMode && ['pending', 'start'].includes($game.status) && !$game.modalName}
+{#if $game.godMode && ['pending', 'start'].includes($game.status)}
     <div class="godmode" transition:slide>
         <span>{$game.word}</span>
         <div class="clear" on:click={clearStorage}>
