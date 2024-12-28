@@ -383,12 +383,6 @@ function createGame()
         return game
     })
 
-    const changeTheme = () => update(game => {
-        let newTheme = config.themes[(config.themes.findIndex(t => t.name == game.user.theme) + 1) % config.themes.length]
-        game.user.theme = newTheme.name
-        return game
-    })
-
     const clearStorage = () => update(game => {
         game.user = config.defaultLocalStorage.data
         if (game.godMode) {
@@ -416,7 +410,6 @@ function createGame()
         getScore,
         useClue,
         inputName,
-        changeTheme,
         clearStorage,
         changeFlame,
         toggleLockLetter,

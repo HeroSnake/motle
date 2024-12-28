@@ -46,7 +46,7 @@ export const getLocalStorage = (key, defaultLocalStorage) => {
         localStorageValue = JSON.parse(localStorage.getItem(key))
     } catch {}
 
-    if (localStorageValue === null) {
+    if (typeof localStorageValue != typeof defaultLocalStorage) {
         return defaultLocalStorage
     }
 
