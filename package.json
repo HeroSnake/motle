@@ -1,7 +1,7 @@
 {
-	"name": "www",
+	"name": "motle",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --host --port 3000",
@@ -17,6 +17,7 @@
 	},
 	"dependencies": {
 		"@sveltestrap/sveltestrap": "^6.2.7",
+		"@vercel/blob": "^0.27.0",
 		"svelte-awesome": "^3.3.5"
 	}
 }
