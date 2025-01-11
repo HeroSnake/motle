@@ -17,12 +17,13 @@ const GameStateMachine = {
 function createGame()
 {
     // Instance game var
-    let gameInstance, currentLetter, currentWord, userString, word
+    let gameInstance, currentLetter, currentWord, userString
     let user = getLocalStorage('data', {...config.defaultLocalStorage.data})
     let history = getLocalStorage('history', {...config.defaultLocalStorage.history})
+
+    // Dictionary of words
     const wordsFiltered = Object.freeze([...words.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
     const playableWordsFiltered = Object.freeze([...playableWords.filter(w => w.length >= config.minLength && w.length <= config.maxLength)])
-    let godMode = user.username == config.godMode
 
     const getNextAttempt = word => [...word].map((l, i) => ({
         value: !i ? l : '',
@@ -33,41 +34,43 @@ function createGame()
         clued: false,
     }))
 
-    function initKeyboard() {
-        let status = 'unchecked'
-        const valids = []
-        const invalids = []
-        const inWord = []
-        history.attempts.forEach(w => w.forEach(k => {
-            if (k.status == 'in-word') {
-                inWord.push(k.value)
-            } else if (k.status == 'invalid') {
-                invalids.push(k.value)
-            } else if (k.status == 'valid') {
-                valids.push(k.value)
-            }
-        }))
-        return config.keys.map(k => {
-            status = 'unchecked'
-            if (valids.includes(k.value)) {
-                status = 'valid'
-            } else if (inWord.includes(k.value)) {
-                status = 'in-word'
-            } else if (invalids.includes(k.value)) {
-                status = 'invalid'
-            }
-            return {...k, status}
-        })
+    function updateKeyboard() {
+        const forceKey = new Map()
+
+        // Taking only done attempts
+        for (const attempt of history.attempts.slice(0, -1)) {
+            const letterStatus = attempt.reduce((c, i) => {
+                !c.has(i.value) && c.set(i.value, [])
+                c.get(i.value).push(i.status)
+                return c
+            }, new Map())
+
+            letterStatus.forEach((s, l) => {
+                // Don't change allready valid values
+                if (forceKey.get(l) === 'valid') {
+                    return
+                }
+                if (s.findIndex(v => v !== 'invalid') === -1) {
+                    // Only invalids
+                    forceKey.set(l, 'invalid')
+                } else if (s.includes('valid') && s.includes('invalid') && !s.includes('in-word')) {
+                    forceKey.set(l, 'valid')
+                } else {
+                    forceKey.set(l, 'in-word')
+                }
+            });
+        }
+
+        return config.keys.map(k => ({...k, status: forceKey.get(k.value) || 'unchecked'}))
     }
 
     function init() {
         if (history.word == -1) {
             const idx = Math.floor(Math.random() * playableWordsFiltered.length)
-            word = playableWordsFiltered[idx]
-            history.attempts = [getNextAttempt(word)]
+            history.attempts = [getNextAttempt(playableWordsFiltered[idx])]
             history.word = idx
         } else {
-            word = playableWordsFiltered[history.word % playableWordsFiltered.length]
+            const word = playableWordsFiltered[history.word % playableWordsFiltered.length]
             if (!history.attempts.length) {
                 history.attempts = [getNextAttempt(word)]
             }
@@ -79,16 +82,16 @@ function createGame()
     // WRITABLE OBJECT
     const { subscribe, set, update } = writable({
         status: gameStatus[0],
-        word,
+        word: playableWordsFiltered[history.word],
         inputIndex: 1,
         attempts: history.attempts,
         fundedLetters: history.fundedLetters,
-        keyboard: initKeyboard(),
+        keyboard: updateKeyboard(),
         clues: 1,
         user,
         history,
         cluedIdx: history.clues,
-        godMode
+        godMode: user.username == config.godMode,
     })
 
     // Adding ref game
@@ -105,7 +108,7 @@ function createGame()
     })
 
     function initGameStatus() {
-        if (history.fundedLetters.length == word.length) {
+        if (history.fundedLetters.length == gameInstance.word.length) {
             gameInstance.status = 'success'
         } else if (gameInstance.attempts.length == config.maxTry && !currentWord.map(l => l.status).includes('unchecked')) {
             // Last attempt allready submited
@@ -131,7 +134,7 @@ function createGame()
         game.word = playableWordsFiltered[idx]
         game.fundedLetters = []
         game.history.word = idx
-        game.keyboard = game.keyboard.map(k => ({...k, status: 'unchecked'}))
+        game.keyboard = structuredClone(config.keys)
         game.cluedIdx = []
         return game
     })
@@ -237,20 +240,14 @@ function createGame()
         currentWord.forEach((letter, i) => letter.value == arrayWord[i] ? valids.push(i) : unchecked.push(arrayWord[i]))
 
         for (const [i, letter] of currentWord.entries()) {
-            const keyboardKey = gameInstance.keyboard.find(k => k.value == letter.value)
             if (valids.includes(i)) {
                 letter.newStatus = 'valid'
-                keyboardKey.status = 'valid'
             } else {
                 const idx = unchecked.indexOf(letter.value)
                 if (idx != -1) {
                     letter.newStatus = 'in-word'
-                    keyboardKey.status = 'in-word'
                     unchecked.splice(idx, 1)
                 } else {
-                    if (keyboardKey.status == 'unchecked') {
-                        keyboardKey.status = 'invalid'
-                    }
                     letter.newStatus = 'invalid'
                 }
             }
@@ -267,7 +264,6 @@ function createGame()
             gameInstance.fundedLetters = [...gameInstance.fundedLetters, ...valids].filter(unique)
         }
 
-        gameInstance.inputIndex = 1
         update(g => gameInstance)
 
         if (valids.length == gameInstance.word.length) {
@@ -276,6 +272,8 @@ function createGame()
             changeGameState('fail')
         } else {
             gameInstance.attempts.push(getNextAttempt(gameInstance.word))
+            gameInstance.keyboard = updateKeyboard()
+            gameInstance.inputIndex = 1
             update(g => gameInstance)
             updateFoundedLetters()
             changeGameState('start')
