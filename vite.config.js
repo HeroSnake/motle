@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-	   hmr: {
+		hmr: {
 			host: "0.0.0.0"
 		}
 	}
