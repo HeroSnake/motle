@@ -13,8 +13,6 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-}
-body {
     font-family: 'UbuntuMono regular', monospace !important;
     margin: 0;
     padding: 0;
@@ -25,6 +23,9 @@ body {
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    background-color: #000;
 }
 
 a {
@@ -53,6 +54,8 @@ textarea {
 
 button {
     outline: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .header {
@@ -88,7 +91,26 @@ button {
     font-family: 'Playfair';
     font-size: 40px;
     cursor: pointer;
-    margin-left: .3em;
+}
+
+.logo-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 2px solid;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Playfair';
+}
+
+.logo-btn:active {
+    transform: scale(0.95);
 }
 
 .custom-modal {
@@ -110,7 +132,6 @@ button {
     padding: 0 10px;
     margin: auto;
     text-align: center;
-    height: 90dvh;
     overflow-y: scroll;
 }
 
@@ -163,28 +184,40 @@ button {
 }
 
 .keyboard {
-    padding: 10px;
-    width: 100%;
+    padding: 4px;
+    width: 100vw;
+    max-width: 512px;
     text-transform: uppercase;
-    position: absolute;
+    position: fixed;
     bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     height: max-content;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .keyboard-line {
     display: flex;
     justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
 }
 
 .keyboard-letter,
 .keyboard-key {
-    padding: 14px 20px;
-    font-size: 2em;
-    border-radius: 3px;
+    padding: 8px 8px;
+    font-size: 1.4em;
+    border-radius: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-shrink: 1;
 }
 
 .help {
@@ -214,6 +247,14 @@ button {
     grid-column-end: 3;
 }
 
+.enter-symbol {
+    font-size: 1.5em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .back {
     opacity: 0.2;
 }
@@ -221,23 +262,81 @@ button {
 .end-game-container {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     flex-direction: column;
-    padding-bottom: 25px;
+    padding: 20px 15px 25px;
+    gap: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+.end-game-container.success,
+.end-game-container.fail {
+    min-height: 100%;
+}
+
+.wiki-overlay {
+    width: 100%;
+    max-width: 512px;
+    border-radius: 8px;
+    overflow: hidden;
+    animation: fade-in 0.3s ease;
+    display: flex;
+    justify-content: center;
 }
 
 .end-game-container img {
-    height: 220px;
+    height: 200px;
     width: auto;
+    margin-bottom: 8px;
+    will-change: auto;
 }
 
 .answer {
     font-size: 50px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 12px;
+    border-radius: 8px;
+    user-select: none;
+}
+
+.answer:hover {
+    filter: brightness(1.2);
+}
+
+.score-text {
+    margin: 12px 0;
+    opacity: 0.9;
 }
 
 .buttons-block {
     display: flex;
-    gap: 20px;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.end-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 2px solid;
+    font-weight: bold;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    flex: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.end-btn:active {
+    transform: scale(0.95);
 }
 
 button {
@@ -277,17 +376,7 @@ button {
     background-color: #497d49 !important;
 }
 
-.buttons-block > button {
-    background: transparent;
-    font-size: 1em;
-    padding: 10px;
-    border-radius: 3px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
-    margin-top: 20px;
-}
+
 
 .keyboard-letter:active,
 .keyboard-key:active,
@@ -321,7 +410,12 @@ button {
 @media screen and (max-width: 641px) {
     .keyboard-letter,
     .keyboard-key {
-        padding: 0;
+        padding: 6px 4px;
+        font-size: 1.2em;
+    }
+    .keyboard-line {
+        gap: 2px;
+        padding: 0 2px;
     }
 }
 
@@ -528,4 +622,669 @@ body .light:not(.end-game),
 .light:not(.end-game) .input-index,
 .light .help.up {
     filter: drop-shadow(0 0 0.55rem rgba(34, 34, 34, 0.565));
+}
+
+/* ============ ARCADE MODE ============ */
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-left: .3em;
+}
+
+.level-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7em;
+}
+
+.level-text {
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.level-bar {
+    width: 60px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    border: 1px solid currentColor;
+    overflow: hidden;
+}
+
+.level-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+}
+
+/* Arcade Animations */
+@keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+        color: #fff;
+    }
+    20%, 24%, 55% {
+        text-shadow: 0 0 20px rgba(255, 0, 255, 1);
+        color: #ff00ff;
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 255, 1);
+    }
+}
+
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scale-pop {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes flip-valid {
+    0% {
+        transform: rotateX(0deg);
+    }
+    50% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: rotateX(0deg);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ============ ARCADE THEMES ============ */
+
+/* Base Arcade Dark */
+.arcade-dark {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%) !important;
+    color: #fff !important;
+}
+
+.arcade-dark .page {
+    color: #fff !important;
+    background: transparent !important;
+}
+
+.arcade-dark .header {
+    background: linear-gradient(90deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1)) !important;
+    border-bottom: 2px solid rgba(255, 0, 255, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(255, 0, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+.arcade-dark .keyboard {
+    background: linear-gradient(90deg, rgba(255, 0, 255, 0.05), rgba(0, 255, 255, 0.05)) !important;
+    box-shadow: 0 -4px 20px rgba(255, 0, 255, 0.2) !important;
+}
+
+.arcade-dark .keyboard-letter,
+.arcade-dark .keyboard-key {
+    background: rgba(255, 0, 255, 0.2) !important;
+    border: 1px solid rgba(255, 0, 255, 0.4) !important;
+    color: #fff !important;
+    transition: all 0.2s ease !important;
+}
+
+.arcade-dark .keyboard-letter:active,
+.arcade-dark .keyboard-key:active {
+    animation: scale-pop 0.4s ease !important;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 1) !important;
+}
+
+.arcade-dark .word-block {
+    background: rgba(255, 0, 255, 0.15) !important;
+    border: 2px solid rgba(255, 0, 255, 0.4) !important;
+    box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+.arcade-dark .valid {
+    background: linear-gradient(135deg, #00ff88, #00dd99) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.8) !important;
+    animation: flip-valid 0.6s ease-out !important;
+    color: #000 !important;
+}
+
+.arcade-dark .invalid {
+    background: linear-gradient(135deg, #ff1166, #cc0055) !important;
+    box-shadow: 0 0 15px rgba(255, 17, 102, 0.8) !important;
+    opacity: 1 !important;
+    color: #fff !important;
+}
+
+.arcade-dark .in-word {
+    background: linear-gradient(135deg, #ffff00, #ffdd00) !important;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8) !important;
+    color: #000 !important;
+}
+
+.arcade-dark .input-index .word-block {
+    box-shadow: inset 0 0 15px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.6) !important;
+    animation: pulse-glow 1.5s ease-in-out infinite !important;
+}
+
+.arcade-dark .logo-btn {
+    color: #ff00ff !important;
+    border-color: #ff00ff !important;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5) !important;
+}
+
+.arcade-dark .logo-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8) !important;
+}
+
+.arcade-dark .end-btn {
+    background: rgba(255, 0, 255, 0.15) !important;
+    border-color: #ff00ff !important;
+    color: #fff !important;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.4) !important;
+}
+
+.arcade-dark .end-btn:hover {
+    background: rgba(255, 0, 255, 0.3) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8) !important;
+}
+
+.arcade-dark .replay-btn {
+    border-color: #00ff88 !important;
+    color: #00ff88 !important;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.4) !important;
+}
+
+.arcade-dark .replay-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8) !important;
+    background: rgba(0, 255, 136, 0.15) !important;
+}
+
+.arcade-dark .share-btn {
+    border-color: #ffff00 !important;
+    color: #ffff00 !important;
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.4) !important;
+}
+
+.arcade-dark .share-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8) !important;
+    background: rgba(255, 255, 0, 0.1) !important;
+}
+
+.arcade-dark .wiki-overlay {
+    background: linear-gradient(135deg, rgba(10, 14, 39, 0.99), rgba(26, 26, 62, 0.99)) !important;
+    border: 1px solid rgba(255, 0, 255, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(255, 0, 255, 0.2), inset 0 0 20px rgba(255, 0, 255, 0.15) !important;
+}
+
+.arcade-dark .page {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%) !important;
+}
+
+/* Arcade Neon */
+.arcade-neon {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a0f2e 100%) !important;
+    color: #00ff88 !important;
+}
+
+.arcade-neon .page {
+    color: #00ff88 !important;
+}
+
+.arcade-neon .header {
+    background: rgba(0, 255, 136, 0.05) !important;
+    border-bottom: 2px solid rgba(0, 255, 136, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1) !important;
+    color: #00ff88 !important;
+}
+
+.arcade-neon .keyboard {
+    background: rgba(0, 255, 136, 0.05) !important;
+}
+
+.arcade-neon .keyboard-letter,
+.arcade-neon .keyboard-key {
+    background: rgba(0, 255, 136, 0.15) !important;
+    border: 1px solid rgba(0, 255, 136, 0.4) !important;
+    color: #00ff88 !important;
+}
+
+.arcade-neon .word-block {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border: 2px solid rgba(0, 255, 136, 0.3) !important;
+    color: #00ff88 !important;
+}
+
+.arcade-neon .valid {
+    background: linear-gradient(135deg, #00ff88, #00ffaa) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 1) !important;
+    color: #000 !important;
+}
+
+.arcade-neon .invalid {
+    background: linear-gradient(135deg, #ff0088, #ff33aa) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 136, 0.9) !important;
+    color: #fff !important;
+}
+
+.arcade-neon .in-word {
+    background: linear-gradient(135deg, #ffff33, #ffff66) !important;
+    box-shadow: 0 0 15px rgba(255, 255, 51, 0.9) !important;
+    color: #000 !important;
+}
+
+.arcade-neon .input-index .word-block {
+    box-shadow: inset 0 0 15px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.6) !important;
+    animation: pulse-glow 1.5s ease-in-out infinite !important;
+}
+
+.arcade-neon .logo-btn {
+    color: #00ff88 !important;
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5) !important;
+}
+
+.arcade-neon .logo-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8) !important;
+}
+
+.arcade-neon .end-btn {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border-color: #00ff88 !important;
+    color: #00ff88 !important;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.4) !important;
+}
+
+.arcade-neon .end-btn:hover {
+    background: rgba(0, 255, 136, 0.2) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8) !important;
+}
+
+.arcade-neon .replay-btn {
+    border-color: #ff0088 !important;
+    color: #ff0088 !important;
+    box-shadow: 0 0 10px rgba(255, 0, 136, 0.4) !important;
+}
+
+.arcade-neon .replay-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 136, 0.8) !important;
+    background: rgba(255, 0, 136, 0.15) !important;
+}
+
+.arcade-neon .share-btn {
+    border-color: #ffff33 !important;
+    color: #ffff33 !important;
+    box-shadow: 0 0 10px rgba(255, 255, 51, 0.4) !important;
+}
+
+.arcade-neon .share-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 51, 0.8) !important;
+    background: rgba(255, 255, 51, 0.1) !important;
+}
+
+.arcade-neon .wiki-overlay {
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.99), rgba(26, 15, 46, 0.99)) !important;
+    border: 1px solid rgba(0, 255, 136, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.15) !important;
+}
+
+.arcade-neon .page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a0f2e 100%) !important;
+}
+
+/* Arcade Retro */
+.arcade-retro {
+    background: #1a1410 !important;
+    color: #ffaa00 !important;
+}
+
+.arcade-retro .page {
+    color: #ffaa00 !important;
+}
+
+.arcade-retro .header {
+    background: rgba(255, 170, 0, 0.1) !important;
+    border-bottom: 2px solid rgba(255, 170, 0, 0.3) !important;
+    color: #ffaa00 !important;
+}
+
+.arcade-retro .keyboard {
+    background: rgba(255, 170, 0, 0.05) !important;
+}
+
+.arcade-retro .keyboard-letter,
+.arcade-retro .keyboard-key {
+    background: rgba(255, 170, 0, 0.15) !important;
+    border: 1px solid rgba(255, 170, 0, 0.3) !important;
+    color: #ffaa00 !important;
+}
+
+.arcade-retro .word-block {
+    background: rgba(255, 170, 0, 0.1) !important;
+    border: 2px solid rgba(255, 170, 0, 0.3) !important;
+    color: #ffaa00 !important;
+}
+
+.arcade-retro .valid {
+    background: linear-gradient(135deg, #88ff00, #aabb00) !important;
+    box-shadow: 0 0 15px rgba(136, 255, 0, 0.7) !important;
+    color: #000 !important;
+}
+
+.arcade-retro .invalid {
+    background: linear-gradient(135deg, #dd4400, #bb2200) !important;
+    box-shadow: 0 0 15px rgba(220, 68, 0, 0.7) !important;
+    color: #fff !important;
+}
+
+.arcade-retro .in-word {
+    background: linear-gradient(135deg, #ffdd00, #ffcc00) !important;
+    box-shadow: 0 0 15px rgba(255, 221, 0, 0.8) !important;
+    color: #000 !important;
+}
+
+.arcade-retro .input-index .word-block {
+    box-shadow: inset 0 0 15px rgba(255, 170, 0, 0.8), 0 0 20px rgba(255, 170, 0, 0.6) !important;
+    animation: pulse-glow 1.5s ease-in-out infinite !important;
+}
+
+.arcade-retro .logo-btn {
+    color: #ffaa00 !important;
+    border-color: #ffaa00 !important;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.5) !important;
+}
+
+.arcade-retro .logo-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.8) !important;
+}
+
+.arcade-retro .end-btn {
+    background: rgba(255, 170, 0, 0.1) !important;
+    border-color: #ffaa00 !important;
+    color: #ffaa00 !important;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.4) !important;
+}
+
+.arcade-retro .end-btn:hover {
+    background: rgba(255, 170, 0, 0.2) !important;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.8) !important;
+}
+
+.arcade-retro .replay-btn {
+    border-color: #88ff00 !important;
+    color: #88ff00 !important;
+    box-shadow: 0 0 10px rgba(136, 255, 0, 0.4) !important;
+}
+
+.arcade-retro .replay-btn:hover {
+    box-shadow: 0 0 20px rgba(136, 255, 0, 0.8) !important;
+    background: rgba(136, 255, 0, 0.1) !important;
+}
+
+.arcade-retro .share-btn {
+    border-color: #ffdd00 !important;
+    color: #ffdd00 !important;
+    box-shadow: 0 0 10px rgba(255, 221, 0, 0.4) !important;
+}
+
+.arcade-retro .share-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 221, 0, 0.8) !important;
+    background: rgba(255, 221, 0, 0.1) !important;
+}
+
+.arcade-retro .wiki-overlay {
+    background: rgba(26, 20, 16, 0.99) !important;
+    border: 1px solid rgba(255, 170, 0, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(255, 170, 0, 0.2), inset 0 0 20px rgba(255, 170, 0, 0.15) !important;
+}
+
+.arcade-retro .page {
+    background: #1a1410 !important;
+}
+
+/* Arcade Cyber */
+.arcade-cyber {
+    background: linear-gradient(135deg, #001a26 0%, #0a2a42 100%) !important;
+    color: #00ffff !important;
+}
+
+.arcade-cyber .page {
+    color: #00ffff !important;
+}
+
+.arcade-cyber .header {
+    background: rgba(0, 255, 255, 0.05) !important;
+    border-bottom: 2px solid rgba(0, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1) !important;
+    color: #00ffff !important;
+}
+
+.arcade-cyber .keyboard {
+    background: rgba(0, 255, 255, 0.05) !important;
+    box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.1) !important;
+}
+
+.arcade-cyber .keyboard-letter,
+.arcade-cyber .keyboard-key {
+    background: rgba(0, 255, 255, 0.15) !important;
+    border: 1px solid rgba(0, 255, 255, 0.4) !important;
+    color: #00ffff !important;
+}
+
+.arcade-cyber .word-block {
+    background: rgba(0, 255, 255, 0.1) !important;
+    border: 2px solid rgba(0, 255, 255, 0.3) !important;
+    color: #00ffff !important;
+}
+
+.arcade-cyber .valid {
+    background: linear-gradient(135deg, #00ff88, #00ee99) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.9) !important;
+    color: #000 !important;
+}
+
+.arcade-cyber .invalid {
+    background: linear-gradient(135deg, #ff0077, #ee1166) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 119, 0.9) !important;
+    color: #fff !important;
+}
+
+.arcade-cyber .in-word {
+    background: linear-gradient(135deg, #ffff44, #ffff77) !important;
+    box-shadow: 0 0 15px rgba(255, 255, 68, 0.9) !important;
+    color: #000 !important;
+}
+
+.arcade-cyber .input-index .word-block {
+    box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6) !important;
+    animation: pulse-glow 1.5s ease-in-out infinite !important;
+}
+
+.arcade-cyber .logo-btn {
+    color: #00ffff !important;
+    border-color: #00ffff !important;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5) !important;
+}
+
+.arcade-cyber .logo-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8) !important;
+}
+
+.arcade-cyber .end-btn {
+    background: rgba(0, 255, 255, 0.1) !important;
+    border-color: #00ffff !important;
+    color: #00ffff !important;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4) !important;
+}
+
+.arcade-cyber .end-btn:hover {
+    background: rgba(0, 255, 255, 0.2) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8) !important;
+}
+
+.arcade-cyber .replay-btn {
+    border-color: #ff0077 !important;
+    color: #ff0077 !important;
+    box-shadow: 0 0 10px rgba(255, 0, 119, 0.4) !important;
+}
+
+.arcade-cyber .replay-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 119, 0.8) !important;
+    background: rgba(255, 0, 119, 0.15) !important;
+}
+
+.arcade-cyber .share-btn {
+    border-color: #ffff44 !important;
+    color: #ffff44 !important;
+    box-shadow: 0 0 10px rgba(255, 255, 68, 0.4) !important;
+}
+
+.arcade-cyber .share-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 68, 0.8) !important;
+    background: rgba(255, 255, 68, 0.1) !important;
+}
+
+.arcade-cyber .wiki-overlay {
+    background: linear-gradient(135deg, rgba(0, 26, 38, 0.99), rgba(10, 42, 66, 0.99)) !important;
+    border: 1px solid rgba(0, 255, 255, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.15) !important;
+}
+
+.arcade-cyber .page {
+    background: linear-gradient(135deg, #001a26 0%, #0a2a42 100%) !important;
+}
+
+/* Wiki Modal Popup Styling */
+.wiki-popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    pointer-events: none;
+}
+
+.wiki-popup-wrapper .wiki-modal-backdrop {
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(4px);
+}
+
+.wiki-popup-wrapper .wiki-modal {
+    pointer-events: auto;
+}
+
+/* Arcade Dark Theme */
+.arcade-dark.wiki-popup-wrapper .wiki-modal {
+    border: 2px solid rgba(255, 0, 255, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(255, 0, 255, 0.15) !important;
+}
+
+.arcade-dark.wiki-popup-wrapper .wiki-close {
+    color: #ff00ff !important;
+}
+
+/* Arcade Neon Theme */
+.arcade-neon.wiki-popup-wrapper .wiki-modal {
+    border: 2px solid rgba(0, 255, 136, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 255, 136, 0.15) !important;
+}
+
+.arcade-neon.wiki-popup-wrapper .wiki-close {
+    color: #00ff88 !important;
+}
+
+/* Arcade Retro Theme */
+.arcade-retro.wiki-popup-wrapper .wiki-modal {
+    background: rgb(182, 182, 182) !important;
+    border: 2px solid rgba(255, 170, 0, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(255, 170, 0, 0.3), inset 0 0 20px rgba(255, 170, 0, 0.15) !important;
+}
+
+.arcade-retro.wiki-popup-wrapper .wiki-close {
+    color: #ffaa00 !important;
+}
+
+/* Arcade Cyber Theme */
+.arcade-cyber.wiki-popup-wrapper .wiki-modal {
+    background: #1a1a1a !important;
+    border: 2px solid rgba(0, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.15) !important;
+}
+
+.arcade-cyber.wiki-popup-wrapper .wiki-close {
+    color: #00ffff !important;
+}
+
+@media (min-width: 600px) {
+    html, body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    #app, :global(#app) {
+        margin: 0;
+        width: 512px;
+        height: 100vh;
+        max-height: 100vh;
+        border: 3px solid rgba(255, 0, 255, 0.3);
+        box-shadow: 0 0 40px rgba(255, 0, 255, 0.2);
+    }
+}
+
+/* Performance optimizations */
+.word-block, .keyboard-letter, .keyboard-key {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }

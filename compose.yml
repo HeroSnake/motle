@@ -1,0 +1,11 @@
+services:
+  npm:
+    image: node:20
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
+    entrypoint: npm run dev
+    env_file:
+      - .env.local

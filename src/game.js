@@ -2,6 +2,7 @@ import { writable } from 'svelte/store'
 import { words } from './words.js'
 import { config } from './config'
 import { playableWords } from './playableWords.js'
+import { progression } from './progression.js'
 import { laPause, lePulse, unique, saveToLocalStorage, getLocalStorage } from './action.js'
 
 const gameStatus = ['start', 'success', 'fail', 'pending', 'reroll']
@@ -289,15 +290,18 @@ function createGame()
         }
 
         if (status == 'success') {
-            if (getScore() > game.user.highScore) {
-                game.user.highScore = getScore()
+            const score = getScore()
+            if (score > game.user.highScore) {
+                game.user.highScore = score
             }
-            game.user.streak += Math.floor(Math.log2(getScore() / 100))
+            game.user.streak += Math.floor(Math.log2(score / 100))
             if (game.user.reroll < 1 && game.user.streak % 2 == 0) {
                 game.user.reroll++
             }
+            progression.updateStats({ won: true, attempts: game.attempts.length, score })
         } else if (status == 'fail') {
             game.user.streak = 0
+            progression.updateStats({ won: false, attempts: game.attempts.length, score: 0 })
         } else if (status == 'reroll') {
             if (!game.godMode && game.user.reroll > 0) {
                 game.user.reroll--

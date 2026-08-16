@@ -9,7 +9,7 @@
     $: placeHolderNumber = Math.abs(config.maxTry - $game.attempts.length);
 </script>
 
-<Col xs="12" lg="8" class="page">
+<Col xs="12" class="page">
     <Endgame />
     {#each $game.attempts as entry, iw}
         <div class="words-container">
