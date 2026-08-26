@@ -407,18 +407,6 @@ button {
     }
 }
 
-@media screen and (max-width: 641px) {
-    .keyboard-letter,
-    .keyboard-key {
-        padding: 6px 4px;
-        font-size: 1.2em;
-    }
-    .keyboard-line {
-        gap: 2px;
-        padding: 0 2px;
-    }
-}
-
 
 /* -------------- DARK -------------- */
 

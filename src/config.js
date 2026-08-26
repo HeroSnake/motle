@@ -51,11 +51,11 @@ export const config = {
     maxTry: 6,
     minLength: 5,
     maxLength: 8,
-    revealDelay: 60,
+    revealDelay: 250,
     godMode: 'tgm',
     transitions: {
-        time: 40,
-        duration: 80
+        time: 100,
+        duration: 200
     },
     sharingHeader: 'Motle ♾️',
     defaultLocalStorage: {
