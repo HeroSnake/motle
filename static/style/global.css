@@ -1,0 +1,709 @@
+@font-face {
+    font-family: 'UbuntuMono regular';
+    src: url('../fonts/UbuntuMono-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Playfair';
+    src: url('../fonts/Playfair_144pt-Light.ttf');
+}
+
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-family: 'UbuntuMono regular', monospace !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    height: inherit;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    background-color: #000;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+label {
+    display: block;
+}
+
+input,
+button,
+select,
+textarea {
+    font-size: inherit;
+    -webkit-padding: 0.4em 0;
+    padding: 0.4em;
+    margin: 0 0 0.5em 0;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+button {
+    outline: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.header {
+    display: flex;
+    font-size: 1em;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    height: 10dvh;
+}
+
+.mid-container {
+    display: flex;
+    gap: 20px;
+}
+
+.mid-container > span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.header > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Playfair';
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.logo-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 2px solid;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Playfair';
+}
+
+.logo-btn:active {
+    transform: scale(0.95);
+}
+
+.custom-modal {
+    height: 100dvh;
+    width: 100vw;
+    position: absolute;
+    z-index: 3;
+}
+
+.custom-modal-content {
+    z-index: 4;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.page {
+    padding: 0 10px;
+    margin: auto;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+.words-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.themes {
+    position: absolute;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    z-index: 1;
+    flex-direction: column;
+    left: 0;
+    top: 50px;
+}
+
+.themes .selected {
+    color: red;
+}
+
+.input-container {
+    display: flex;
+    grid-column: 7 / span 3;
+}
+
+.word-block {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: xx-large;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+.keyboard-container {
+    margin: auto;
+    display: grid;
+    /* grid-template-columns: repeat(10, 1fr); */
+    grid-gap: 8px;
+}
+
+.keyboard-container > .keyboard-input {
+    border: none;
+}
+
+.keyboard {
+    padding: 4px;
+    width: 100vw;
+    max-width: 512px;
+    text-transform: uppercase;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: max-content;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.keyboard-line {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+.keyboard-letter,
+.keyboard-key {
+    padding: 8px 8px;
+    font-size: 1.4em;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+.help {
+    margin-right: 1em;
+}
+
+.input-index
+.help {
+    transition: 0.2s all;
+}
+
+.help.up:hover {
+    transform: scale(1.3);
+}
+
+.help.down {
+    opacity: 0.6;
+}
+
+.supp {
+    background-color: #bd4747 !important;
+    grid-column-start: 9;
+    grid-column-end: 11;
+}
+
+.enter {
+    background-color: #497d49 !important;
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+.supp:active, .enter:active {
+    filter: brightness(2);
+}
+
+.enter-symbol {
+    font-size: 1.5em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back {
+    opacity: 0.2;
+}
+
+.end-game-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px 15px 25px;
+    gap: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+.end-game-container.success,
+.end-game-container.fail {
+    min-height: 100%;
+}
+
+.wiki-overlay {
+    width: 100%;
+    max-width: 512px;
+    border-radius: 8px;
+    overflow: hidden;
+    animation: fade-in 0.3s ease;
+    display: flex;
+    justify-content: center;
+}
+
+.end-game-container img {
+    height: 200px;
+    width: auto;
+    margin-bottom: 8px;
+    will-change: auto;
+}
+
+.answer {
+    font-size: 50px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 12px;
+    border-radius: 8px;
+    user-select: none;
+}
+
+.answer:hover {
+    filter: brightness(1.2);
+}
+
+.score-text {
+    margin: 12px 0;
+    opacity: 0.9;
+}
+
+.buttons-block {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.end-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 2px solid;
+    font-weight: bold;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    flex: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.end-btn:active {
+    transform: scale(0.95);
+}
+
+button {
+    background-color: transparent;
+}
+
+.keyboard-letter:active,
+.keyboard-key:active,
+.clear,
+.reset,
+.help.up,
+.username {
+    cursor: pointer;
+}
+
+.godmode {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-family: 'Playfair';
+}
+
+.reset:hover {
+	animation: rotate 0.5s linear;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+
+/* -------------- DARK -------------- */
+
+html, body .dark, .dark .page {
+    color: #fff !important;
+}
+html, body .dark:not(.end-game), .dark:not(.end-game) .page {
+    background-color: #272236 !important;
+}
+
+.dark a {
+    color: rgb(0, 100, 200);
+}
+
+.dark a:visited {
+    color: rgb(0, 80, 160);
+}
+
+.dark input,
+.dark button,
+.dark select,
+.dark textarea {
+    border: 1px solid #ccc;
+}
+
+.dark input:disabled,
+.dark .buttons-block > button {
+    color: #fff;
+}
+
+.dark button {
+    color: #333;
+}
+
+.dark button:disabled {
+    color: #999;
+}
+
+.dark button:not(:disabled):active {
+    background-color: #ddd;
+}
+
+.dark button:focus {
+    border-color: #666;
+}
+
+.dark .header,
+.dark .themes,
+.dark .keyboard {
+    background-color: #171420;
+}
+
+.dark .custom-modal {
+    background-color: #00000059;
+}
+
+.dark .word-block,
+.dark .keyboard-letter,
+.dark .keyboard-key {
+    background-color: #666;
+    color: #fff;
+}
+
+.dark .keyboard {
+    color: #666;
+}
+
+.dark .input-inde,
+.dark .help.up,
+.clear:hover {
+    filter: drop-shadow(0 0 0.55rem #ccc);
+}
+
+.dark .help.up:hover {
+    filter: drop-shadow(0 0 0.55rem #ffd900);
+}
+
+.dark.end-game:has(.fail) {
+    background: #000;
+}
+
+.dark.end-game {
+    background-color: #25032b;
+}
+
+.dark .buttons-block > button:hover {
+    color: #000;
+    background-color: #fff;
+}
+
+.dark .close-def-btn:hover {
+    background-color: #fff;
+}
+
+.dark .keyboard-letter:active,
+.dark .keyboard-key:active {
+    background-color: #333;
+}
+
+.dark:not(.end-game) .input-index,
+.dark .help.up {
+    filter: drop-shadow(0 0 0.55rem #ccc);
+}
+/* -------------- LIGHT -------------- */
+
+html,
+body .light:not(.end-game),
+.light:not(.end-game) .page {
+    color: #222 !important;
+    background-color: #ccc !important;
+}
+
+.light a {
+    color: rgb(0, 100, 200);
+}
+
+.light a:visited {
+    color: rgb(0, 80, 160);
+}
+
+.light input,
+.light button,
+.light select,
+.light textarea {
+    border: 1px solid #222;
+}
+
+.light input:disabled,
+.light .buttons-block > button {
+    color: #222;
+}
+
+.light button {
+    color: #333;
+}
+
+.light button:disabled {
+    color: #999;
+}
+
+.light button:not(:disabled):active {
+    background-color: #ddd;
+}
+
+.light button:focus {
+    border-color: #666;
+}
+
+.light .header,
+.light .themes,
+.light .flame-selector,
+.light .keyboard {
+    background-color: rgb(146, 146, 146) !important;
+}
+
+.light .custom-modal {
+    background-color: #2d2d2dc7;
+}
+
+.light .word-block,
+.light .keyboard-letter,
+.light .keyboard-key {
+    background-color: #666;
+    color: #fff;
+}
+
+.light .keyboard {
+    color: #666;
+}
+
+.light .input-inde,
+.light .help.up {
+    filter: drop-shadow(0 0 0.55rem #ccc);
+}
+
+.light .help.up:hover {
+    filter: drop-shadow(0 0 0.55rem #ffd900);
+}
+
+.light.end-game {
+    background-color: #c5c5c5;
+}
+
+.light .buttons-block > button:hover {
+    color: #fff;
+    background-color: #000;
+}
+
+.light .close-def-btn:hover {
+    background-color: #fff;
+}
+
+.light .keyboard-letter:active,
+.light .keyboard-key:active {
+    background-color: #333;
+}
+
+.light:not(.end-game) .input-index,
+.light .help.up {
+    filter: drop-shadow(0 0 0.55rem rgba(34, 34, 34, 0.565));
+}
+
+/* ============ ARCADE MODE ============ */
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-left: .3em;
+}
+
+.level-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7em;
+}
+
+.level-text {
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.level-bar {
+    width: 60px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    border: 1px solid currentColor;
+    overflow: hidden;
+}
+
+.level-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+}
+
+/* Arcade Animations */
+@keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+        color: #fff;
+    }
+    20%, 24%, 55% {
+        text-shadow: 0 0 20px rgba(255, 0, 255, 1);
+        color: #ff00ff;
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 255, 1);
+    }
+}
+
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scale-pop {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes flip-valid {
+    0% {
+        transform: rotateY(0deg);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(0deg);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+/* Performance optimizations */
+.word-block, .keyboard-letter, .keyboard-key {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}

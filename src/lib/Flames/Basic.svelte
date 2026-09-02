@@ -1,6 +1,6 @@
 <div class="fire">
 	{#each Array(50) as _, i}
-		<div class="particle" />
+		<div class="particle"></div>
 	{/each}
 </div>
 

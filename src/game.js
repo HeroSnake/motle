@@ -258,7 +258,6 @@ function createGame()
             updateLastAttempt(currentWord)
             await laPause(config.revealDelay)
             letter.status = letter.newStatus
-            letter.showAttemp = false
         }
 
         if (valids.length) {
