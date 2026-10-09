@@ -19,7 +19,7 @@ applyTo: "package.json,package-lock.json,vite.config.js,svelte.config.js,compose
 | Command | Runs | Notes |
 |---|---|---|
 | `npm run dev` | `vite dev --host --port 3000` | `--host` binds all interfaces (phone testing on the LAN) |
-| `npm run build` | `vite build` | Uses `adapter-auto` |
+| `npm run build` | `vite build` | Uses `adapter-vercel` with the Node.js 24 function runtime |
 | `npm run preview` | `vite preview` | Serves the build output |
 
 **There is no `lint`, `test`, or `format` script.** Do not add one as a drive-by change.
@@ -92,9 +92,11 @@ npm run build
 npm run preview
 ```
 
-`svelte.config.js` uses `adapter-auto`, which infers the target platform. There is no hosting
-config committed, so you may need an explicit adapter (`adapter-static`, `adapter-vercel`, …).
-If you change it, update this file in the same change.
+`svelte.config.js` uses `adapter-vercel` with `runtime: 'nodejs24.x'`. This project deploys
+to Vercel; explicitly setting the function runtime avoids the adapter deriving a runtime
+from the build environment, which may be newer than the Node versions supported for
+deployment. Keep the adapter package, runtime setting, and this documentation in sync if
+the deployment target changes.
 
 Output lands in `.svelte-kit/output` plus the adapter's own directory; both are gitignored.
 
@@ -214,6 +216,6 @@ npm run build
 - `package-lock.json` is large; touching it produces a noisy diff. Only regenerate when a
   dependency genuinely must change, and call it out explicitly in the commit.
 - Current locked versions: Svelte 5.16.0 · Vite 5.4.21 · SvelteKit 2.52.2 ·
-  vite-plugin-svelte 4.0.4 · adapter-auto 3.3.1 · sveltestrap 6.2.7 · svelte-awesome 3.3.5.
+  vite-plugin-svelte 4.0.4 · adapter-vercel 6.3.4 · sveltestrap 6.2.7 · svelte-awesome 3.3.5.
 - Do not upgrade Svelte 5.x minor versions casually — the app runs in legacy/compat mode and
   some deprecation warnings are load-bearing for the event-forwarding pattern.

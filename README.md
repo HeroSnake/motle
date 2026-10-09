@@ -1,10 +1,6 @@
 <h1 align="center">Motle</h1>
 
 <p align="center">
-  <em>A French Wordle. Six tries, one word, no hints you didn't pay for.</em>
-</p>
-
-<p align="center">
   <img src="static/logo.png" width="88" alt="Motle logo" />
 </p>
 
@@ -18,9 +14,9 @@
 
 ---
 
-<table>
+<table style="border: 0; border-collapse: collapse;">
   <tr>
-    <td width="50%" valign="top">
+    <td width="50%" valign="top" style="border: 0;">
       <h2>How to play</h2>
       <p><strong>Motle</strong> is <em>Le Mot</em> reimagined as an arcade cabinet. A hidden French word is waiting; you get <strong>six attempts</strong> to find it, and every guess has to be a real French word — not a string of hopeful letters.</p>
       <p>Play in your browser or install Motle on your home screen to play offline.</p>
@@ -31,7 +27,7 @@
         <li>Each guess has to be <strong>a real French word</strong>. Anything else flashes red and <strong>does not use up an attempt</strong>.</li>
       </ul>
     </td>
-    <td width="50%" align="center" valign="middle">
+    <td width="50%" align="center" valign="middle" style="border: 0;">
       <img src="static/img/readme/gameplay.png" width="280" alt="The Motle board on a phone: a six-letter word in progress, with the AZERTY keyboard below." />
     </td>
   </tr>
@@ -39,12 +35,12 @@
 
 ---
 
-<table>
+<table style="border: 0; border-collapse: collapse;">
   <tr>
-    <td width="50%" align="center" valign="middle">
+    <td width="50%" align="center" valign="middle" style="border: 0;">
       <img src="static/img/readme/reveal.png" width="280" alt="A submitted row showing green, yellow and red tiles, with the keyboard below coloured to match." />
     </td>
-    <td width="50%" valign="top">
+    <td width="50%" valign="top" style="border: 0;">
       <h2>The colours</h2>
       <p>After each guess, tiles light up to show how close you got:</p>
       <ul>
@@ -60,9 +56,9 @@
 
 ---
 
-<table>
+<table style="border: 0; border-collapse: collapse;">
   <tr>
-    <td width="50%" valign="top">
+    <td width="50%" valign="top" style="border: 0;">
       <h2>Winning & Scoring</h2>
       <p>Find the word in 6 attempts and you win. Run out and you lose — but the answer is shown either way.</p>
       <p>Score rewards <strong>finishing early</strong> and <strong>using rare letters</strong>. Correct letters found early are worth more, while rare letters and yellow matches add a bonus.</p>
@@ -72,7 +68,7 @@
         <li>Tap the revealed word to look up its definition via online dictionary integration.</li>
       </ul>
     </td>
-    <td width="50%" align="center" valign="middle">
+    <td width="50%" align="center" valign="middle" style="border: 0;">
       <img src="static/img/readme/win.png" width="280" alt="The win screen: a celebratory robot, the answer, the score, and Replay and Share buttons." />
     </td>
   </tr>
